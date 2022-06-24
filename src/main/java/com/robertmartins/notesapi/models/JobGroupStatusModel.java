@@ -5,6 +5,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 public class JobGroupStatusModel {
 
@@ -15,17 +16,17 @@ public class JobGroupStatusModel {
     @Column(name = "name", nullable = false, length = 50)
     private String name;
 
-    @Column(name = "name", length = 255)
+    @Column(name = "description", length = 255)
     private String description;
 
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
-    private LocalDateTime updatedAt;
+    private Date updatedAt;
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    private Date createdAt;
 
 }

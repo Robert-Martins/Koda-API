@@ -9,7 +9,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "TB_WORKSPACES_JOBS")
@@ -31,24 +33,24 @@ public class JobModel {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "creatorAndAssignId", referencedColumnName = "id")
-    private UserModel userModel;
+    private UserModel user;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY,optional = false)
     @JoinColumn(name = "jobStatusId", referencedColumnName = "id")
-    private JobStatusModel jobStatusModel;
+    private JobStatusModel jobStatus;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinColumn(name = "jobCommentId", referencedColumnName = "id")
-    private List<CommentModel> commentModels;
+    private List<CommentModel> comments;
 
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
-    private LocalDateTime updatedAt;
+    private Date updatedAt;
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    private Date createdAt;
 
 }

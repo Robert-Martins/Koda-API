@@ -12,6 +12,7 @@ import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -32,7 +33,7 @@ public class UserModel {
     @Column(nullable = false)
     private String password;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, optional = false)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, optional = false)
     @JoinColumn(name = "profileId", referencedColumnName = "id")
     private ProfileModel profile;
 
@@ -47,10 +48,10 @@ public class UserModel {
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
-    private LocalDateTime updatedAt;
+    private Date updatedAt;
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    private Date createdAt;
 }

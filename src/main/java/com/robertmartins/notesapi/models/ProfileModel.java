@@ -9,6 +9,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Table(name = "TB_USERS_PROFILE")
@@ -37,18 +38,18 @@ public class ProfileModel {
     @Column(nullable = false, unique = true, length = 30)
     private String email;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "addressId", referencedColumnName = "id")
     private AddressModel address;
 
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
-    private LocalDateTime updatedAt;
+    private Date updatedAt;
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    private Date createdAt;
 
 }

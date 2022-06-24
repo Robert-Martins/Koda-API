@@ -9,6 +9,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Table(name = "TB_JOBS_STATUS")
@@ -34,11 +35,11 @@ public class JobStatusModel {
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
-    private LocalDateTime updatedAt;
+    private Date updatedAt;
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    private Date createdAt;
 
 }
