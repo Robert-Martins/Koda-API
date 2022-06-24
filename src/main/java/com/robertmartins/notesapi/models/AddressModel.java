@@ -1,5 +1,6 @@
 package com.robertmartins.notesapi.models;
 
+import com.robertmartins.notesapi.enums.UfEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,7 +30,7 @@ public class AddressModel {
     private String postalCode;
 
     @Column(length = 15)
-    private String uf;
+    private UfEnum uf;
 
     @Column(length = 20)
     private String city;

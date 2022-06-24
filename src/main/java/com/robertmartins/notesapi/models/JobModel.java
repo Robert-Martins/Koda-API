@@ -26,11 +26,19 @@ public class JobModel {
     @Column(name = "name", nullable = false, length = 50)
     private String name;
 
-    @Column(name = "name", length = 255)
+    @Column(name = "description", length = 255)
     private String description;
 
-    private WorkspaceModel workspaceModel;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "creatorAndAssignId", referencedColumnName = "id")
+    private UserModel userModel;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "jobStatusId", referencedColumnName = "id")
+    private JobStatusModel jobStatusModel;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "jobCommentId", referencedColumnName = "id")
     private List<CommentModel> commentModels;
 
     @UpdateTimestamp

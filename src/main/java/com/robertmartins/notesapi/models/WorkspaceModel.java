@@ -26,12 +26,16 @@ public class WorkspaceModel {
     @Column(name = "name", nullable = false, length = 50)
     private String name;
 
-    @Column(name = "name", length = 255)
+    @Column(name = "description", length = 255)
     private String description;
 
-    private UserModel user;
-
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "jobsId", referencedColumnName = "id")
     private List<JobModel> jobModels;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "jobsStatusId", referencedColumnName = "id")
+    private List<JobStatusModel> jobStatusModels;
 
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)

@@ -26,6 +26,8 @@ public class CommentModel {
     @Column(name = "name", nullable = false, length = 50)
     private String name;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "creatorId", referencedColumnName = "id")
     private UserModel user;
 
     @UpdateTimestamp

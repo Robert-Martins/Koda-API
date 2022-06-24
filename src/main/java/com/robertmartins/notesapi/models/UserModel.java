@@ -1,5 +1,6 @@
 package com.robertmartins.notesapi.models;
 
+import com.robertmartins.notesapi.enums.UserRolesEnum;
 import jdk.jfr.Timestamp;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -31,12 +32,16 @@ public class UserModel {
     @Column(nullable = false)
     private String password;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, optional = false)
     @JoinColumn(name = "profileId", referencedColumnName = "id")
     private ProfileModel profile;
 
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "workspaceId", referencedColumnName = "id")
     private List<WorkspaceModel> workspaceModels;
 
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "jobsId", referencedColumnName = "id")
     private List<JobModel> jobModels;
 
     @UpdateTimestamp

@@ -11,18 +11,7 @@ import javax.validation.constraints.Size;
 @Setter
 public class UserDto {
 
-    @NotNull
-    @Size(max = 50)
-    private String name;
-
-    @Size(max = 15)
-    private String cpf;
-
-    @Size(max = 15)
-    private String birthDate;
-
-    @Size(max = 15)
-    private String telephone;
+    private ProfileDto profile;
 
     @NotNull
     @Size(max = 30)
@@ -31,17 +20,5 @@ public class UserDto {
     @NotNull
     @Size(max = 30, min = 8)
     private String password;
-
-    @Size(max = 20)
-    private String country;
-
-    @Size(max = 15)
-    private String postalCode;
-
-    @Size(max = 15)
-    private String uf;
-
-    @Size(max = 20)
-    private String city;
 
 }
