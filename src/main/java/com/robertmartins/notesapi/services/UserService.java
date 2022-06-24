@@ -21,6 +21,10 @@ public class UserService {
         return userRepository.findById(id);
     }
 
+    public void deleteById(int id){
+        userRepository.deleteById(id);
+    }
+
     public boolean existsByLogin(String login){
         return userRepository.existsByLogin(login);
     }
