@@ -5,6 +5,7 @@ import com.robertmartins.notesapi.models.AddressModel;
 import com.robertmartins.notesapi.models.ProfileModel;
 import com.robertmartins.notesapi.models.UserModel;
 import com.robertmartins.notesapi.services.ProfileService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,11 +20,8 @@ import java.util.Date;
 @RequestMapping("/profile")
 public class ProfileController {
 
-    final ProfileService profileService;
-
-    public ProfileController(ProfileService profileService){
-        this.profileService = profileService;
-    }
+    @Autowired
+    private ProfileService profileService;
 
     public ProfileModel setProfile(ProfileDto profileDto, AddressModel addressModel, String email){
         var profile = new ProfileModel();

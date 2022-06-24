@@ -2,6 +2,7 @@ package com.robertmartins.notesapi.services;
 
 import com.robertmartins.notesapi.models.UserModel;
 import com.robertmartins.notesapi.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -9,11 +10,8 @@ import java.util.Optional;
 @Service
 public class UserService {
 
-    final UserRepository userRepository;
-
-    public UserService(UserRepository userRepository){
-        this.userRepository = userRepository;
-    }
+    @Autowired
+    private UserRepository userRepository;
 
     public UserModel save(UserModel userModel){
         return userRepository.save(userModel);

@@ -5,6 +5,7 @@ import com.robertmartins.notesapi.models.AddressModel;
 import com.robertmartins.notesapi.models.ProfileModel;
 import com.robertmartins.notesapi.services.AddressService;
 import com.robertmartins.notesapi.services.ProfileService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,14 +21,11 @@ import java.util.Optional;
 @RequestMapping("user/{id}/address")
 public class AddressController {
 
-    final AddressService addressService;
+    @Autowired
+    private AddressService addressService;
 
-    final ProfileService profileService;
-
-    public AddressController(AddressService addressService, ProfileService profileService){
-        this.addressService = addressService;
-        this.profileService = profileService;
-    }
+    @Autowired
+    private ProfileService profileService;
 
     public AddressModel setAddress(AddressDto addressDto){
         var address = new AddressModel();
