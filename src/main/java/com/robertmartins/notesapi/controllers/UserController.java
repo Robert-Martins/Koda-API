@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("/users")
 public class UserController {
     @Autowired
@@ -50,6 +51,8 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         return ResponseEntity.status(HttpStatus.OK).body(user);
     }
+
+    
 
     @DeleteMapping("/{id}")
     @ResponseBody
