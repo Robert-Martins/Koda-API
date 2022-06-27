@@ -8,9 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.List;
 
 @Entity
 @Table(name = "TB_JOBS_COMMENTS")
@@ -24,8 +22,16 @@ public class CommentModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "name", nullable = false, length = 50)
-    private String name;
+    @Column(name = "comment", nullable = false, length = 255)
+    private String comment;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "authorId", referencedColumnName = "id")
+    private UserModel user;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "jobId", referencedColumnName = "id")
+    private JobModel jobModel;
 
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)

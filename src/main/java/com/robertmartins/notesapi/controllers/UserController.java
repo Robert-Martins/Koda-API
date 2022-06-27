@@ -20,12 +20,6 @@ public class UserController {
     private UserService userService;
 
     @Autowired
-    private ProfileService profileService;
-
-    @Autowired
-    private AddressService addressService;
-
-    @Autowired
     private ProfileController profileController;
 
     @Autowired
@@ -51,8 +45,6 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         return ResponseEntity.status(HttpStatus.OK).body(user);
     }
-
-    
 
     @DeleteMapping("/{id}")
     @ResponseBody
