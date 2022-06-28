@@ -28,6 +28,9 @@ public class WorkspaceController {
     @Autowired
     private JobStatusController jobStatusController;
 
+    @Autowired
+    private AuthorizationController authorizationController;
+
     @PostMapping
     public ResponseEntity<Object> save(@RequestBody @Valid NewWorkspaceDto newWorkspaceDto, @PathVariable(name = "id") int id){
         var user = userService.findById(id);
@@ -42,6 +45,8 @@ public class WorkspaceController {
     @GetMapping("/{workspaceId}")
     public ResponseEntity<Object> findUserWorkspaceById(@PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId){
         var workspace = workspaceService.findById(workspaceId);
+        if(!authorizationController.itIsUserWorkspace(id, workspace.get()))
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Action Not Allowed");
         if(workspace.isEmpty())
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Workspace Not Found");
         return ResponseEntity.status(HttpStatus.OK).body(workspace.get());
@@ -50,21 +55,34 @@ public class WorkspaceController {
     @PutMapping("/{workspaceId}")
     public ResponseEntity<Object> updateUserWorkspaceById(@PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId, @RequestBody @Valid NewWorkspaceDto workspaceDto){
         var workspace = workspaceService.findById(workspaceId);
+        if(!authorizationController.itIsUserWorkspace(id, workspace.get()))
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Action Not Allowed");
         if(workspace.isEmpty())
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Workspace Not Found");
         workspace.get().setName(workspaceDto.getName());
         workspace.get().setDescription(workspaceDto.getDescription());
         workspace.get().setJobStatus(workspaceDto.getJobStatusModelList());
+        workspace.get().setUpdatedAt(new Date());
         return ResponseEntity.status(HttpStatus.CREATED).body(workspaceService.save(workspace.get()));
     }
 
     @DeleteMapping("/{workspaceId}")
     public ResponseEntity<Object> deleteUserWorkspaceById(@PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId){
         var workspace = workspaceService.findById(workspaceId);
+        if(!authorizationController.itIsUserWorkspace(id, workspace.get()))
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Action Not Allowed");
         if(workspace.isEmpty())
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Workspace Not Found");
         workspaceService.deleteById(workspaceId);
-        return ResponseEntity.status(HttpStatus.OK).body("User deleted");
+        return ResponseEntity.status(HttpStatus.OK).body("Workspace Deleted");
+    }
+
+    @GetMapping
+    public ResponseEntity<Object> getAllUserWorkspaces(@PathVariable(name = "id") int id){
+        var user = userService.findById(id);
+        if(user.isEmpty())
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User Not Found");
+        return ResponseEntity.status(HttpStatus.OK).body(user.get().getWorkspaces());
     }
 
     public WorkspaceModel setWorkspace(NewWorkspaceDto newWorkspaceDto){
@@ -77,10 +95,6 @@ public class WorkspaceController {
             workspace.setCreatedAt(new Date());
         }
         return workspace;
-    }
-
-    public int findItemIndex(List<WorkspaceModel> workspaceModelList, WorkspaceModel workspaceModel){
-        return workspaceModelList.indexOf(workspaceModel);
     }
 
 }
