@@ -14,10 +14,6 @@ public class UserDto {
     private ProfileDto profile;
 
     @NotNull
-    @Size(max = 30)
-    private String email;
-
-    @NotNull
     @Size(max = 30, min = 8)
     private String password;
 

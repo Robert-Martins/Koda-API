@@ -36,21 +36,21 @@ public class ProfileController {
         if(user.isEmpty())
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User Not Found");
         var profile = user.get().getProfile();
-        profile.setUpdatedAt(new Date());
         profile.setName(profileDto.getName());
-        profile.setCpf(profileDto.getCpf());
         profile.setEmail(profileDto.getEmail());
-        profile.setAddress(profileDto.getAddress());
+        profile.setCpf(profileDto.getCpf());
         profile.setBirthDate(profileDto.getBirthDate());
         profile.setTelephone(profileDto.getTelephone());
+        profile.setAddress(profileDto.getAddress());
+        profile.setUpdatedAt(new Date());
         return ResponseEntity.status(HttpStatus.CREATED).body(profileService.save(profile));
     }
 
-    public ProfileModel setProfile(ProfileDto profileDto, AddressModel addressModel, String email){
+    public ProfileModel setProfile(ProfileDto profileDto, AddressModel addressModel){
         var profile = new ProfileModel();
         profile.setName(profileDto.getName());
         profile.setCpf(profileDto.getCpf());
-        profile.setEmail(email);
+        profile.setEmail(profile.getEmail());
         profile.setTelephone(profileDto.getTelephone());
         profile.setBirthDate(profileDto.getBirthDate());
         profile.setAddress(addressModel);

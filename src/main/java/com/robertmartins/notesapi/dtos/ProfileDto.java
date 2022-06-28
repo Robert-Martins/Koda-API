@@ -14,6 +14,10 @@ public class ProfileDto {
     @Size(max = 50)
     private String name;
 
+    @NotNull
+    @Size(max = 30)
+    private String email;
+
     @Size(max = 15)
     private String cpf;
 
