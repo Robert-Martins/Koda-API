@@ -8,7 +8,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -32,11 +31,11 @@ public class WorkspaceModel {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "jobsId", referencedColumnName = "id")
-    private List<JobModel> jobModels;
+    private List<JobModel> jobs;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "jobsStatusId", referencedColumnName = "id")
-    private List<JobStatusModel> jobStatusModels;
+    private List<JobStatusModel> jobStatus;
 
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)

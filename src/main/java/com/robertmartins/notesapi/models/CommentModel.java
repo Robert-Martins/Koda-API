@@ -31,7 +31,7 @@ public class CommentModel {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "jobId", referencedColumnName = "id")
-    private JobModel jobModel;
+    private JobModel job;
 
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
