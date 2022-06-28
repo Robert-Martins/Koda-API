@@ -39,11 +39,7 @@ public class UserModel {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "workspaceId", referencedColumnName = "id")
-    private List<WorkspaceModel> workspaceModels;
-
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "jobsId", referencedColumnName = "id")
-    private List<JobModel> jobModels;
+    private List<WorkspaceModel> workspaces;
 
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)

@@ -3,7 +3,6 @@ package com.robertmartins.notesapi.controllers;
 import com.robertmartins.notesapi.dtos.AddressDto;
 import com.robertmartins.notesapi.models.AddressModel;
 import com.robertmartins.notesapi.services.AddressService;
-import com.robertmartins.notesapi.services.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,9 +15,6 @@ public class AddressController {
 
     @Autowired
     private AddressService addressService;
-
-    @Autowired
-    private ProfileService profileService;
 
     public AddressModel setAddress(AddressDto addressDto){
         var address = new AddressModel();
