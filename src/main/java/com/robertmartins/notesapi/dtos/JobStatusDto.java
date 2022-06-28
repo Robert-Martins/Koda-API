@@ -1,15 +1,16 @@
-package com.robertmartins.notesapi.controllers;
+package com.robertmartins.notesapi.dtos;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.List;
 
 @Getter
 @Setter
-public class NewWorkspaceDto {
+@AllArgsConstructor
+public class JobStatusDto {
 
     @NotNull
     @Size(max = 50)
@@ -18,6 +19,7 @@ public class NewWorkspaceDto {
     @Size(max = 255)
     private String description;
 
-    private List<JobStatusDto> jobStatusDtoList;
+    @NotNull
+    private String color;
 
 }

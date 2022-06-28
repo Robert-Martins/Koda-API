@@ -1,14 +1,16 @@
-package com.robertmartins.notesapi.controllers;
+package com.robertmartins.notesapi.dtos;
 
+import com.robertmartins.notesapi.models.JobStatusModel;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 @Getter
 @Setter
-public class JobStatusDto {
+public class NewWorkspaceDto {
 
     @NotNull
     @Size(max = 50)
@@ -17,7 +19,6 @@ public class JobStatusDto {
     @Size(max = 255)
     private String description;
 
-    @NotNull
-    private String color;
+    private List<JobStatusModel> jobStatusModelList;
 
 }

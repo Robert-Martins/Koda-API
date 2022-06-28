@@ -42,4 +42,12 @@ public class JobStatusModel {
     @Column(nullable = false, updatable = false)
     private Date createdAt;
 
+    public JobStatusModel(String name, String description, String color, Date updatedAt, Date createdAt){
+        this.setName(name);
+        this.setDescription(description);
+        this.setColor(color);
+        this.setUpdatedAt(updatedAt);
+        this.setCreatedAt(createdAt);
+    }
+
 }
