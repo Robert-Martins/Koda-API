@@ -8,10 +8,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "TB_WORKSPACES_JOBS")
@@ -40,7 +38,7 @@ public class JobModel {
     private JobStatusModel jobStatus;
 
     @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
-    @JoinColumn(name = "jobCommentId", referencedColumnName = "id")
+    @JoinColumn(name = "jobId", referencedColumnName = "id")
     private List<CommentModel> comments;
 
     @UpdateTimestamp

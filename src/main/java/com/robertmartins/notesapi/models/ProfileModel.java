@@ -39,7 +39,7 @@ public class ProfileModel {
     private String email;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "addressId", referencedColumnName = "id")
+    @JoinColumn(name = "profileId", referencedColumnName = "id")
     private AddressModel address;
 
     @UpdateTimestamp

@@ -2,6 +2,9 @@ package com.robertmartins.notesapi.controllers;
 
 import com.robertmartins.notesapi.dtos.JobStatusDto;
 import com.robertmartins.notesapi.models.JobStatusModel;
+import com.robertmartins.notesapi.repositories.WorkspaceRepository;
+import com.robertmartins.notesapi.resources.JobStatusResource;
+import com.robertmartins.notesapi.resources.WorkspaceResource;
 import com.robertmartins.notesapi.services.JobStatusService;
 import com.robertmartins.notesapi.services.WorkspaceService;
 import org.springframework.beans.BeanUtils;
@@ -20,34 +23,27 @@ import java.util.List;
 public class JobStatusController {
 
     @Autowired
-    private JobStatusService jobStatusService;
+    private JobStatusResource jobStatusResource;
 
     @Autowired
-    private WorkspaceService workspaceService;
+    private WorkspaceResource workspaceResource;
 
     @Autowired
     private AuthorizationController authorizationController;
 
     @PostMapping
     public ResponseEntity<Object> save(@PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId, @RequestBody @Valid JobStatusDto jobStatusDto){
-        var workspace = workspaceService.findById(workspaceId);
+        var workspace = workspaceResource.findById(workspaceId);
         if(workspace.isEmpty())
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Workspace Not Found");
-        if(!authorizationController.itIsUserWorkspace(id, workspace.get()))
+        if(!authorizationController.itIsUserWorkspace(id, workspaceId))
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Action Not Allowed");
-        var jobStatusList = workspace.get().getJobStatus();
-        var jobStatus = new JobStatusModel();
-        BeanUtils.copyProperties(jobStatusDto, jobStatus);
-        jobStatus.setUpdatedAt(new Date());
-        jobStatus.setCreatedAt(new Date());
-        jobStatusList.add(jobStatus);
-        workspace.get().setJobStatus(jobStatusList);
-        return ResponseEntity.status(HttpStatus.CREATED).body(workspaceService.save(workspace.get()));
+        return ResponseEntity.status(HttpStatus.CREATED).body(jobStatusResource.save(jobStatusDto, workspaceId));
     }
 
     @GetMapping("/{statusId}")
     public ResponseEntity<Object> getJobStatus(@PathVariable(name = "id")int id, @PathVariable(name = "statusId") int statusId){
-        var jobStatus = jobStatusService.findById(statusId);
+        var jobStatus = jobStatusResource.findById(statusId);
         if(jobStatus.isEmpty())
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Status Not Found");
         if(!authorizationController.itIsUserWorkspaceStatus(id, statusId))
@@ -57,35 +53,23 @@ public class JobStatusController {
 
     @PutMapping("/{statusId}")
     public ResponseEntity<Object> updateStatusById(@PathVariable(name = "id")int id, @PathVariable(name = "statusId") int statusId, JobStatusDto jobStatusDto){
-        var jobStatus = jobStatusService.findById(statusId);
+        var jobStatus = jobStatusResource.findById(statusId);
         if(jobStatus.isEmpty())
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Status Not Found");
         if(!authorizationController.itIsUserWorkspaceStatus(id, statusId))
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Action Not Allowed");
-        BeanUtils.copyProperties(jobStatusDto, jobStatus);
-        jobStatus.get().setUpdatedAt(new Date());
-        return ResponseEntity.status(HttpStatus.CREATED).body(jobStatusService.save(jobStatus.get()));
+        return ResponseEntity.status(HttpStatus.CREATED).body(jobStatusResource.update(jobStatusDto, statusId));
     }
 
     @DeleteMapping("/{statusId}")
     public ResponseEntity<Object> deleteStatusById(@PathVariable(name = "id")int id, @PathVariable(name = "statusId") int statusId){
-        var jobStatus = jobStatusService.findById(statusId);
+        var jobStatus = jobStatusResource.findById(statusId);
         if(jobStatus.isEmpty())
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Status Not Found");
         if(!authorizationController.itIsUserWorkspaceStatus(id, statusId))
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Action Not Allowed");
-        jobStatusService.deleteById(statusId);
+        jobStatusResource.deleteById(statusId);
         return ResponseEntity.status(HttpStatus.OK).body("Status Deleted");
-    }
-
-
-
-    public List<JobStatusModel> createGenericStatus(){
-        List<JobStatusModel> jobStatusList = new ArrayList<>();
-        jobStatusList.add(new JobStatusModel("To-Do", "Jobs to be done", "##ff1c37", new Date(), new Date()));
-        jobStatusList.add(new JobStatusModel("Development", "Jobs in development", "##ffc800", new Date(), new Date()));
-        jobStatusList.add(new JobStatusModel("Done", "Jobs done", "##29e000", new Date(), new Date()));
-        return jobStatusList;
     }
 
 }

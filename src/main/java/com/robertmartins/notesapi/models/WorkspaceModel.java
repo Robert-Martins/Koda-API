@@ -30,11 +30,11 @@ public class WorkspaceModel {
     private String description;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "jobsId", referencedColumnName = "id")
+    @JoinColumn(name = "jobId", referencedColumnName = "id")
     private List<JobModel> jobs;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "jobsStatusId", referencedColumnName = "id")
+    @JoinColumn(name = "jobStatusId", referencedColumnName = "id")
     private List<JobStatusModel> jobStatus;
 
     @UpdateTimestamp

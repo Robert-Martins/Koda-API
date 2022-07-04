@@ -5,17 +5,21 @@ import com.robertmartins.notesapi.models.JobStatusModel;
 import com.robertmartins.notesapi.models.WorkspaceModel;
 import com.robertmartins.notesapi.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RestController;
 
+@RestController
 public class AuthorizationController {
 
     @Autowired
     private UserService userService;
 
-    public boolean itIsUserWorkspace(int id, WorkspaceModel workspaceModel){
+    public boolean itIsUserWorkspace(int id, int workspaceId){
         var user = userService.findById(id);
         var workspaceList = user.get().getWorkspaces();
-        if(workspaceList.contains(workspaceModel))
-            return true;
+        for(WorkspaceModel workspace : workspaceList){
+            if(workspace.getId() == workspaceId)
+                return true;
+        }
         return false;
     }
 

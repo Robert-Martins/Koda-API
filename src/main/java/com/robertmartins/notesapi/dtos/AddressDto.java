@@ -16,7 +16,6 @@ public class AddressDto {
     @Size(max = 15)
     private String postalCode;
 
-    @Size(max = 15)
     private UfEnum uf;
 
     @Size(max = 20)
