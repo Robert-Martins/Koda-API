@@ -2,17 +2,13 @@ package com.robertmartins.notesapi.controllers;
 
 import com.robertmartins.notesapi.dtos.UserCredentialsDto;
 import com.robertmartins.notesapi.dtos.UserDto;
-import com.robertmartins.notesapi.models.UserModel;
-import com.robertmartins.notesapi.resources.AddressResource;
 import com.robertmartins.notesapi.resources.UserResource;
-import com.robertmartins.notesapi.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Date;
 
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)

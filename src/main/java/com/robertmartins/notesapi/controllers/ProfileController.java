@@ -1,21 +1,15 @@
 package com.robertmartins.notesapi.controllers;
 
-import com.robertmartins.notesapi.dtos.ProfileDto;
 import com.robertmartins.notesapi.dtos.UserProfileDto;
-import com.robertmartins.notesapi.models.AddressModel;
-import com.robertmartins.notesapi.models.ProfileModel;
 import com.robertmartins.notesapi.models.UserModel;
 import com.robertmartins.notesapi.resources.ProfileResource;
 import com.robertmartins.notesapi.resources.UserResource;
-import com.robertmartins.notesapi.services.ProfileService;
-import com.robertmartins.notesapi.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Date;
 import java.util.Optional;
 
 @RestController
