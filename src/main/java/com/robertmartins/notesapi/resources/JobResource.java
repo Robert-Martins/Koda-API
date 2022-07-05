@@ -9,6 +9,10 @@ public interface JobResource {
 
     JobModel save(JobDto jobDto, int workspaceId);
 
+    JobModel update(JobDto jobDto, int jobId);
+
+    void delete(int id);
+
     Optional<JobModel> findById(int id);
 
 }

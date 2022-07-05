@@ -19,6 +19,6 @@ public class JobDto {
     private String description;
 
     @NotNull
-    private JobStatusModel jobStatusModel;
+    private int statusId;
 
 }

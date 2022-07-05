@@ -31,5 +31,23 @@ public class JobController {
         return ResponseEntity.status(HttpStatus.CREATED).body(jobResource.save(jobDto, workspaceId));
     }
 
+    @GetMapping("/{jobId}")
+    public ResponseEntity<Object> getJobById(@PathVariable(name = "jobId") int id){
+        var job = jobResource.findById(id);
+        if(job.isEmpty())
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Job Not Found");
+        return ResponseEntity.status(HttpStatus.OK).body(job.get());
+    }
+
+    @PutMapping("/{jobId}")
+    public ResponseEntity<Object> updateJobById(@PathVariable(name = "jobId") int id, @RequestBody @Valid JobDto jobDto){
+        return ResponseEntity.status(HttpStatus.CREATED).body(jobResource.update(jobDto, id));
+    }
+
+    @DeleteMapping("/{jobId}")
+    public ResponseEntity<Object> deleteJobById(@PathVariable(name = "jobId") int id){
+        jobResource.delete(id);
+        return ResponseEntity.status(HttpStatus.OK).body("User Deleted");
+    }
 
 }
