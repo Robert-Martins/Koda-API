@@ -1,47 +1,28 @@
 package com.robertmartins.notesapi.controllers;
 
-import com.robertmartins.notesapi.models.AddressModel;
-import com.robertmartins.notesapi.models.JobStatusModel;
-import com.robertmartins.notesapi.models.WorkspaceModel;
-import com.robertmartins.notesapi.services.UserService;
+import com.robertmartins.notesapi.dtos.UserCredentialsDto;
+import com.robertmartins.notesapi.resources.AuthorizationResource;
+import com.robertmartins.notesapi.resources.UserResource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RestController
+@RequestMapping
 public class AuthorizationController {
 
     @Autowired
-    private UserService userService;
+    private AuthorizationResource authorizationResource;
 
-    public boolean itIsUserWorkspace(int id, int workspaceId){
-        var user = userService.findById(id);
-        var workspaceList = user.get().getWorkspaces();
-        for(WorkspaceModel workspace : workspaceList){
-            if(workspace.getId() == workspaceId)
-                return true;
-        }
-        return false;
-    }
+    @Autowired
+    private UserResource userResource;
 
-    public boolean itIsUserWorkspaceStatus(int id, int statusId){
-        var user = userService.findById(id);
-        var workspaceList = user.get().getWorkspaces();
-        for(WorkspaceModel workspace : workspaceList){
-            var statusList = workspace.getJobStatus();
-            for(JobStatusModel status : statusList){
-                if(status.getId() == statusId)
-                    return true;
-            }
-        }
-        return false;
-    }
 
-    public boolean itIsUserAddress(int id, int addressId){
-        var user = userService.findById(id);
-        var userAddressId = user.get().getProfile().getAddress().getId();
-        if(userAddressId == addressId)
-            return true;
-        return false;
-    }
 
 }
