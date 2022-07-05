@@ -9,6 +9,7 @@ import com.robertmartins.notesapi.resources.UserResource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
+import java.util.Optional;
 
 public class CommentService implements CommentResource{
 
@@ -24,6 +25,21 @@ public class CommentService implements CommentResource{
     public CommentModel save(CommentDto commentDto, int userId ,int jobId){
         var comment = setComment(commentDto, userId, jobId);
         return commentRepository.save(comment);
+    }
+
+    public CommentModel update(CommentDto commentDto, int commentId){
+        var comment = this.findById(commentId);
+        comment.get().setComment(commentDto.getComment());
+        comment.get().setUpdatedAt(new Date());
+        return comment.get();
+    }
+
+    public void delete(int id){
+        commentRepository.deleteById(id);
+    }
+
+    public Optional<CommentModel> findById(int id){
+        return commentRepository.findById(id);
     }
 
     private CommentModel setComment(CommentDto commentDto, int userId, int jobId){
