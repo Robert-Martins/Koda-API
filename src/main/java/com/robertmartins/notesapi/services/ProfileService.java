@@ -6,28 +6,31 @@ import com.robertmartins.notesapi.models.AddressModel;
 import com.robertmartins.notesapi.models.ProfileModel;
 import com.robertmartins.notesapi.models.UserModel;
 import com.robertmartins.notesapi.repositories.ProfileRepository;
+import com.robertmartins.notesapi.repositories.UserRepository;
 import com.robertmartins.notesapi.resources.AddressResource;
+import com.robertmartins.notesapi.resources.ProfileResource;
 import com.robertmartins.notesapi.resources.UserResource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.Optional;
 
-@Service
-public class ProfileService {
+@Component
+public class ProfileService implements ProfileResource {
 
     @Autowired
     private ProfileRepository profileRepository;
 
     @Autowired
-    private UserResource userResource;
+    private UserRepository userRepository;
 
     @Autowired
     private AddressResource addressResource;
 
     public ProfileModel update(UserProfileDto profileDto, int id){
-        Optional<UserModel> user = userResource.findById(id);
+        Optional<UserModel> user = userRepository.findById(id);
         var profile = user.get().getProfile();
         profile.setName(profileDto.getName());
         profile.setEmail(profileDto.getEmail());

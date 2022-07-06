@@ -5,7 +5,10 @@ import com.robertmartins.notesapi.models.WorkspaceModel;
 import com.robertmartins.notesapi.resources.AuthorizationResource;
 import com.robertmartins.notesapi.resources.UserResource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
+@Component
 public class AuthorizationService implements AuthorizationResource {
 
     @Autowired

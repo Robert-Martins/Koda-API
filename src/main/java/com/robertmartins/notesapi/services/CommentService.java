@@ -7,10 +7,13 @@ import com.robertmartins.notesapi.resources.CommentResource;
 import com.robertmartins.notesapi.resources.JobResource;
 import com.robertmartins.notesapi.resources.UserResource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.Optional;
 
+@Component
 public class CommentService implements CommentResource{
 
     @Autowired

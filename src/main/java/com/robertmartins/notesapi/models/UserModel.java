@@ -1,5 +1,6 @@
 package com.robertmartins.notesapi.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.robertmartins.notesapi.enums.UserRolesEnum;
 import jdk.jfr.Timestamp;
 import lombok.AllArgsConstructor;
@@ -30,6 +31,7 @@ public class UserModel {
     @Column(nullable = false, unique = true)
     private String login;
 
+    @JsonIgnore
     @Column(nullable = false)
     private String password;
 

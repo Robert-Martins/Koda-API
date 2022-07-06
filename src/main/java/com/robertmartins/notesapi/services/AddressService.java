@@ -6,12 +6,13 @@ import com.robertmartins.notesapi.repositories.AddressRepository;
 import com.robertmartins.notesapi.resources.AddressResource;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.Optional;
 
-@Service
+@Component
 public class AddressService implements AddressResource {
 
     @Autowired

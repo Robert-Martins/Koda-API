@@ -8,6 +8,7 @@ import com.robertmartins.notesapi.resources.JobStatusResource;
 import com.robertmartins.notesapi.resources.WorkspaceResource;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -15,17 +16,17 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-@Service
+@Component
 public class JobStatusService implements JobStatusResource {
 
     @Autowired
     private JobStatusRepository jobStatusRepository;
 
     @Autowired
-    private WorkspaceResource workspaceResource;
+    private WorkspaceRepository workspaceRepository;
 
     public JobStatusModel save(JobStatusDto jobStatusDto, int id){
-        var workspace = workspaceResource.findById(id);
+        var workspace = workspaceRepository.findById(id);
         var jobStatusList = workspace.get().getJobStatus();
         var jobStatus = new JobStatusModel();
         BeanUtils.copyProperties(jobStatusDto, jobStatus);
@@ -33,7 +34,7 @@ public class JobStatusService implements JobStatusResource {
         jobStatus.setCreatedAt(new Date());
         jobStatusList.add(jobStatus);
         workspace.get().setJobStatus(jobStatusList);
-        workspaceResource.saveWorkspace(workspace.get());
+        workspaceRepository.save(workspace.get());
         return jobStatus;
     }
 
