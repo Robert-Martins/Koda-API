@@ -29,11 +29,11 @@ public class WorkspaceModel {
     @Column(name = "description", length = 255)
     private String description;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "jobId", referencedColumnName = "id")
     private List<JobModel> jobs;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "jobStatusId", referencedColumnName = "id")
     private List<JobStatusModel> jobStatus;
 

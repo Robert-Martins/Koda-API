@@ -39,7 +39,7 @@ public class UserModel {
     @JoinColumn(name = "userId", referencedColumnName = "id")
     private ProfileModel profile;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "userId", referencedColumnName = "id")
     private List<WorkspaceModel> workspaces;
 

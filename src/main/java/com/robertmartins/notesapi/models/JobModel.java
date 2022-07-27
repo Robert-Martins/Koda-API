@@ -37,7 +37,7 @@ public class JobModel {
     @JoinColumn(name = "jobStatusId", referencedColumnName = "id")
     private JobStatusModel jobStatus;
 
-    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "jobId", referencedColumnName = "id")
     private List<CommentModel> comments;
 
