@@ -1,5 +1,6 @@
 package com.robertmartins.notesapi.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,11 +30,12 @@ public class JobModel {
     @Column(name = "description", length = 255)
     private String description;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "creatorAndAssignId", referencedColumnName = "id")
     private UserModel user;
 
-    @ManyToOne(fetch = FetchType.LAZY,optional = false)
+    @ManyToOne(fetch = FetchType.EAGER,optional = false)
     @JoinColumn(name = "jobStatusId", referencedColumnName = "id")
     private JobStatusModel jobStatus;
 

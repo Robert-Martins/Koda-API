@@ -4,6 +4,7 @@ import com.robertmartins.notesapi.dtos.JobDto;
 import com.robertmartins.notesapi.models.JobModel;
 import com.robertmartins.notesapi.repositories.JobRepository;
 import com.robertmartins.notesapi.repositories.JobStatusRepository;
+import com.robertmartins.notesapi.repositories.UserRepository;
 import com.robertmartins.notesapi.repositories.WorkspaceRepository;
 import com.robertmartins.notesapi.resources.JobResource;
 import com.robertmartins.notesapi.resources.JobStatusResource;
@@ -23,12 +24,16 @@ public class JobService implements JobResource {
     private JobRepository jobRepository;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private WorkspaceRepository workspaceRepository;
 
     @Autowired
     private JobStatusRepository jobStatusRepository;
 
-    public JobModel save(JobDto jobDto, int workspaceId){
+    public JobModel save(JobDto jobDto, int id, int workspaceId){
+        var user = userRepository.findById(id);
         var workspace = workspaceRepository.findById(workspaceId);
         var status = jobStatusRepository.findById(jobDto.getStatusId());
         var jobList = workspace.get().getJobs();
@@ -36,6 +41,7 @@ public class JobService implements JobResource {
         job.setName(jobDto.getName());
         job.setDescription(jobDto.getDescription());
         job.setJobStatus(status.get());
+        job.setUser(user.get());
         job.setUpdatedAt(new Date());
         job.setCreatedAt(new Date());
         jobList.add(job);

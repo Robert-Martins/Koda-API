@@ -30,6 +30,8 @@ public class GroupModel {
     @Column(name = "description", length = 255)
     private String description;
 
+
+
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)

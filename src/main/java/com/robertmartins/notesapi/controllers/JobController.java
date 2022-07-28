@@ -25,7 +25,7 @@ public class JobController {
     public ResponseEntity<Object> save(@PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId, @RequestBody @Valid JobDto jobDto){
         if(!authorizationResource.itIsUserWorkspace(id, workspaceId))
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Action Not Allowed");
-        return ResponseEntity.status(HttpStatus.CREATED).body(jobResource.save(jobDto, workspaceId));
+        return ResponseEntity.status(HttpStatus.CREATED).body(jobResource.save(jobDto, id, workspaceId));
     }
 
     @GetMapping("/{jobId}")

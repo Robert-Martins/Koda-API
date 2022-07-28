@@ -10,7 +10,7 @@ import java.util.Optional;
 @Service
 public interface JobResource {
 
-    JobModel save(JobDto jobDto, int workspaceId);
+    JobModel save(JobDto jobDto, int id, int workspaceId);
 
     JobModel update(JobDto jobDto, int jobId);
 

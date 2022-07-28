@@ -29,10 +29,6 @@ public class CommentModel {
     @JoinColumn(name = "authorId", referencedColumnName = "id")
     private UserModel user;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "jobId", referencedColumnName = "id")
-    private JobModel job;
-
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)

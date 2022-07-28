@@ -38,8 +38,8 @@ public class ProfileModel {
     @Column(nullable = false, unique = true, length = 30)
     private String email;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "profileId", referencedColumnName = "id")
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "addressId", referencedColumnName = "id")
     private AddressModel address;
 
     @UpdateTimestamp

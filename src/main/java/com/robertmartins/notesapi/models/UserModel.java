@@ -36,11 +36,11 @@ public class UserModel {
     private String password;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, optional = false)
-    @JoinColumn(name = "userId", referencedColumnName = "id")
+    @JoinColumn(name = "profileId", referencedColumnName = "id")
     private ProfileModel profile;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "userId", referencedColumnName = "id")
+    @JoinColumn(name = "workspaceId", referencedColumnName = "id")
     private List<WorkspaceModel> workspaces;
 
     @UpdateTimestamp
