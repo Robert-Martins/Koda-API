@@ -37,10 +37,6 @@ public class WorkspaceService implements WorkspaceResource {
         return workspace;
     }
 
-    public WorkspaceModel saveWorkspace(WorkspaceModel workspace){
-        return workspaceRepository.save(workspace);
-    }
-
     public WorkspaceModel update(NewWorkspaceDto workspaceDto, int workspaceId){
         var workspace = this.findById(workspaceId);
         workspace.get().setName(workspaceDto.getName());

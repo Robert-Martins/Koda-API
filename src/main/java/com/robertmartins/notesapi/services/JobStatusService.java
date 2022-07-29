@@ -40,8 +40,9 @@ public class JobStatusService implements JobStatusResource {
 
     public JobStatusModel update(JobStatusDto jobStatusDto, int id){
         var jobStatus = this.findById(id);
-        BeanUtils.copyProperties(jobStatusDto, jobStatus);
+        BeanUtils.copyProperties(jobStatusDto, jobStatus.get());
         jobStatus.get().setUpdatedAt(new Date());
+        jobStatusRepository.save(jobStatus.get());
         return jobStatus.get();
     }
 
@@ -55,9 +56,9 @@ public class JobStatusService implements JobStatusResource {
 
     public List<JobStatusModel> createGenericStatus(){
         List<JobStatusModel> jobStatusList = new ArrayList<>();
-        jobStatusList.add(new JobStatusModel("To-Do", "Jobs to be done", "##ff1c37", new Date(), new Date()));
-        jobStatusList.add(new JobStatusModel("Development", "Jobs in development", "##ffc800", new Date(), new Date()));
-        jobStatusList.add(new JobStatusModel("Done", "Jobs done", "##29e000", new Date(), new Date()));
+        jobStatusList.add(new JobStatusModel("To-Do", "Jobs to be done", "#ff1c37", new Date(), new Date()));
+        jobStatusList.add(new JobStatusModel("Development", "Jobs in development", "#ffc800", new Date(), new Date()));
+        jobStatusList.add(new JobStatusModel("Done", "Jobs done", "#29e000", new Date(), new Date()));
         return jobStatusList;
     }
 

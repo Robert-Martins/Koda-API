@@ -51,7 +51,6 @@ public class CommentService implements CommentResource{
         var comment = new CommentModel();
         comment.setComment(commentDto.getComment());
         comment.setUser(user.get());
-        comment.setJob(job.get());
         comment.setUpdatedAt(new Date());
         comment.setCreatedAt(new Date());
         return comment;

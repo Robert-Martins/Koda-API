@@ -45,7 +45,7 @@ public class JobStatusController {
     }
 
     @PutMapping("/{statusId}")
-    public ResponseEntity<Object> updateStatusById(@PathVariable(name = "id")int id, @PathVariable(name = "statusId") int statusId, JobStatusDto jobStatusDto){
+    public ResponseEntity<Object> updateStatusById(@PathVariable(name = "id")int id, @PathVariable(name = "statusId") int statusId, @RequestBody @Valid JobStatusDto jobStatusDto){
         var jobStatus = jobStatusResource.findById(statusId);
         if(jobStatus.isEmpty())
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Status Not Found");

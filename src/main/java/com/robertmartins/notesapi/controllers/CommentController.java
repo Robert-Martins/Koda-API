@@ -49,8 +49,16 @@ public class CommentController {
         var comment = commentResource.findById(id);
         if(comment.isEmpty())
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Comment Not Found");
-        jobResource.delete(id);
+        commentResource.delete(id);
         return ResponseEntity.status(HttpStatus.OK).body("Comment Deleted");
+    }
+
+    @GetMapping
+    public ResponseEntity<Object> findAllCommentsInAJob(@PathVariable(name = "jobId") int jobId){
+        var job = jobResource.findById(jobId);
+        if(job.isEmpty())
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Job Not Found");
+        return ResponseEntity.status(HttpStatus.OK).body(job.get().getComments());
     }
 
 }

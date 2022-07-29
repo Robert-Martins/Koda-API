@@ -44,7 +44,7 @@ public class JobController {
     @DeleteMapping("/{jobId}")
     public ResponseEntity<Object> deleteJobById(@PathVariable(name = "jobId") int id){
         jobResource.delete(id);
-        return ResponseEntity.status(HttpStatus.OK).body("User Deleted");
+        return ResponseEntity.status(HttpStatus.OK).body("Job Deleted");
     }
 
 }
