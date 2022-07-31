@@ -1,11 +1,13 @@
 package com.robertmartins.notesapi.services;
 
 import com.robertmartins.notesapi.dtos.AddressDto;
+import com.robertmartins.notesapi.exceptions.ResourceNotFoundException;
 import com.robertmartins.notesapi.models.AddressModel;
 import com.robertmartins.notesapi.repositories.AddressRepository;
 import com.robertmartins.notesapi.resources.AddressResource;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -20,13 +22,14 @@ public class AddressService implements AddressResource {
 
     public AddressModel update(AddressDto addressDto, int id){
         var address = this.findById(id);
-        BeanUtils.copyProperties(addressDto, address.get());
-        address.get().setUpdatedAt(new Date());
-        return addressRepository.save(address.get());
+        BeanUtils.copyProperties(addressDto, address);
+        address.setUpdatedAt(new Date());
+        return addressRepository.save(address);
     }
 
-    private Optional<AddressModel> findById(int id) {
-        return addressRepository.findById(id);
+    private AddressModel findById(int id) {
+        return addressRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Address Not Found"));
     }
 
     public AddressModel setAddress(AddressDto addressDto){

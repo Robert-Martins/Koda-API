@@ -1,6 +1,9 @@
 package com.robertmartins.notesapi.controllers;
 
 import com.robertmartins.notesapi.dtos.AddressDto;
+import com.robertmartins.notesapi.exceptions.ActionNotAllowedException;
+import com.robertmartins.notesapi.exceptions.ResourceNotFoundException;
+import com.robertmartins.notesapi.models.AddressModel;
 import com.robertmartins.notesapi.resources.AddressResource;
 import com.robertmartins.notesapi.resources.AuthorizationResource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +25,9 @@ public class AddressController {
     private AuthorizationResource authorizationResource;
 
     @PutMapping("/{addressId}")
-    public ResponseEntity<Object> updateUserAddress(@PathVariable(name = "id") int id, @PathVariable(name = "addressId") int addressId, @RequestBody @Valid AddressDto addressDto){
+    public ResponseEntity<AddressModel> updateUserAddress(@PathVariable(name = "id") int id, @PathVariable(name = "addressId") int addressId, @RequestBody @Valid AddressDto addressDto){
         if(!authorizationResource.itIsUserAddress(id, addressId))
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Action Not Allowed");
+            throw new ActionNotAllowedException();
         return ResponseEntity.status(HttpStatus.CREATED).body(addressResource.update(addressDto, addressId));
     }
 

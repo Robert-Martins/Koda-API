@@ -2,6 +2,7 @@ package com.robertmartins.notesapi.services;
 
 import com.robertmartins.notesapi.controllers.JobStatusController;
 import com.robertmartins.notesapi.dtos.NewWorkspaceDto;
+import com.robertmartins.notesapi.exceptions.ResourceNotFoundException;
 import com.robertmartins.notesapi.models.WorkspaceModel;
 import com.robertmartins.notesapi.repositories.WorkspaceRepository;
 import com.robertmartins.notesapi.resources.JobStatusResource;
@@ -30,27 +31,28 @@ public class WorkspaceService implements WorkspaceResource {
     public WorkspaceModel save(NewWorkspaceDto workspaceDto, int id){
         var user = userResource.findById(id);
         var workspace = this.setWorkspace(workspaceDto);
-        List<WorkspaceModel> workspaceModelList = user.get().getWorkspaces();
+        List<WorkspaceModel> workspaceModelList = user.getWorkspaces();
         workspaceModelList.add(workspace);
-        user.get().setWorkspaces(workspaceModelList);
-        userResource.saveUser(user.get());
+        user.setWorkspaces(workspaceModelList);
+        userResource.saveUser(user);
         return workspace;
     }
 
     public WorkspaceModel update(NewWorkspaceDto workspaceDto, int workspaceId){
         var workspace = this.findById(workspaceId);
-        workspace.get().setName(workspaceDto.getName());
-        workspace.get().setDescription(workspaceDto.getDescription());
-        workspace.get().setUpdatedAt(new Date());
-        return workspaceRepository.save(workspace.get());
+        workspace.setName(workspaceDto.getName());
+        workspace.setDescription(workspaceDto.getDescription());
+        workspace.setUpdatedAt(new Date());
+        return workspaceRepository.save(workspace);
     }
 
     public void deleteById(int id){
         workspaceRepository.deleteById(id);
     }
 
-    public Optional<WorkspaceModel> findById(int id){
-        return workspaceRepository.findById(id);
+    public WorkspaceModel findById(int id){
+        return workspaceRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Workspace Not Found"));
     }
 
     public WorkspaceModel setWorkspace(NewWorkspaceDto newWorkspaceDto){

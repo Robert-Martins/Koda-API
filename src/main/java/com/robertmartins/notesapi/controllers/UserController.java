@@ -26,17 +26,11 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> getUserById(@PathVariable(name = "id") int id){
-        var user = userResource.findById(id);
-        if(user.isEmpty())
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-        return ResponseEntity.status(HttpStatus.OK).body(user);
+        return ResponseEntity.status(HttpStatus.OK).body(userResource.findById(id));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateUserCredentialsById(@PathVariable(name = "id") int id, @RequestBody @Valid UserCredentialsDto userCredentials){
-        var user = userResource.findById(id);
-        if(user.isEmpty())
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         return ResponseEntity.status(HttpStatus.CREATED).body(userResource.updateCredentials(userCredentials, id));
     }
 

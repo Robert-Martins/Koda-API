@@ -17,7 +17,7 @@ public interface UserResource {
 
     UserModel saveUser(UserModel user);
 
-    Optional<UserModel> findById(int id);
+    UserModel findById(int id);
 
     void deleteById(int id);
 

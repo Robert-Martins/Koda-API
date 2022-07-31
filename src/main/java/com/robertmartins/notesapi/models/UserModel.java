@@ -1,18 +1,14 @@
 package com.robertmartins.notesapi.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.robertmartins.notesapi.enums.UserRolesEnum;
-import jdk.jfr.Timestamp;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -40,7 +36,7 @@ public class UserModel {
     private ProfileModel profile;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "workspaceId", referencedColumnName = "id")
+    @JoinColumn(name = "userId", referencedColumnName = "id")
     private List<WorkspaceModel> workspaces;
 
     @UpdateTimestamp

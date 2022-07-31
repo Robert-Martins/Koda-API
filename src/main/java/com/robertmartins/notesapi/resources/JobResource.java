@@ -16,6 +16,6 @@ public interface JobResource {
 
     void delete(int id);
 
-    Optional<JobModel> findById(int id);
+    JobModel findById(int id);
 
 }

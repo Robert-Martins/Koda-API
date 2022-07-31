@@ -1,5 +1,6 @@
 package com.robertmartins.notesapi.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,9 +26,15 @@ public class CommentModel {
     @Column(name = "comment", nullable = false, length = 255)
     private String comment;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "authorId", referencedColumnName = "id")
     private UserModel user;
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "jobId", referencedColumnName = "id")
+    private JobModel job;
 
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)

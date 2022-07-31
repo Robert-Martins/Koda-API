@@ -2,18 +2,15 @@ package com.robertmartins.notesapi.services;
 
 import com.robertmartins.notesapi.dtos.UserCredentialsDto;
 import com.robertmartins.notesapi.dtos.UserDto;
+import com.robertmartins.notesapi.exceptions.ResourceNotFoundException;
 import com.robertmartins.notesapi.models.UserModel;
 import com.robertmartins.notesapi.repositories.UserRepository;
 import com.robertmartins.notesapi.resources.AddressResource;
-import com.robertmartins.notesapi.resources.ProfileResource;
 import com.robertmartins.notesapi.resources.UserResource;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.Optional;
 
 @Component
 public class UserService implements UserResource {
@@ -45,14 +42,15 @@ public class UserService implements UserResource {
 
     public UserModel updateCredentials(UserCredentialsDto userCredentialsDto, int id){
         var user = this.findById(id);
-        user.get().setLogin(userCredentialsDto.getLogin());
-        user.get().setPassword(userCredentialsDto.getPassword());
-        user.get().setUpdatedAt(new Date());
-        return userRepository.save(user.get());
+        user.setLogin(userCredentialsDto.getLogin());
+        user.setPassword(userCredentialsDto.getPassword());
+        user.setUpdatedAt(new Date());
+        return userRepository.save(user);
     }
 
-    public Optional<UserModel> findById(int id){
-        return userRepository.findById(id);
+    public UserModel findById(int id){
+        return userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User Not Found"));
     }
 
     public void deleteById(int id){

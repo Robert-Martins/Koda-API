@@ -1,6 +1,8 @@
 package com.robertmartins.notesapi.controllers;
 
 import com.robertmartins.notesapi.dtos.NewWorkspaceDto;
+import com.robertmartins.notesapi.exceptions.ActionNotAllowedException;
+import com.robertmartins.notesapi.models.WorkspaceModel;
 import com.robertmartins.notesapi.resources.AuthorizationResource;
 import com.robertmartins.notesapi.resources.UserResource;
 import com.robertmartins.notesapi.resources.WorkspaceResource;
@@ -10,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -26,50 +29,35 @@ public class WorkspaceController {
     private AuthorizationResource authorizationResource;
 
     @PostMapping
-    public ResponseEntity<Object> save(@RequestBody @Valid NewWorkspaceDto newWorkspaceDto, @PathVariable(name = "id") int id){
-        var user = userResource.findById(id);
-        if(user.isEmpty())
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User Not Found");
+    public ResponseEntity<WorkspaceModel> save(@RequestBody @Valid NewWorkspaceDto newWorkspaceDto, @PathVariable(name = "id") int id){
         return ResponseEntity.status(HttpStatus.CREATED).body(workspaceResource.save(newWorkspaceDto, id));
     }
 
     @GetMapping("/{workspaceId}")
-    public ResponseEntity<Object> findUserWorkspaceById(@PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId){
-        var workspace = workspaceResource.findById(workspaceId);
+    public ResponseEntity<WorkspaceModel> findUserWorkspaceById(@PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId){
         if(!authorizationResource.itIsUserWorkspace(id, workspaceId))
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Action Not Allowed");
-        if(workspace.isEmpty())
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Workspace Not Found");
-        return ResponseEntity.status(HttpStatus.OK).body(workspace.get());
+            throw new ActionNotAllowedException();
+        return ResponseEntity.status(HttpStatus.OK).body(workspaceResource.findById(workspaceId));
     }
 
     @PutMapping("/{workspaceId}")
-    public ResponseEntity<Object> updateUserWorkspaceById(@PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId, @RequestBody @Valid NewWorkspaceDto workspaceDto){
-        var workspace = workspaceResource.findById(workspaceId);
+    public ResponseEntity<WorkspaceModel> updateUserWorkspaceById(@PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId, @RequestBody @Valid NewWorkspaceDto workspaceDto){
         if(!authorizationResource.itIsUserWorkspace(id, workspaceId))
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Action Not Allowed");
-        if(workspace.isEmpty())
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Workspace Not Found");
+            throw new ActionNotAllowedException();
         return ResponseEntity.status(HttpStatus.CREATED).body(workspaceResource.update(workspaceDto, workspaceId));
     }
 
     @DeleteMapping("/{workspaceId}")
-    public ResponseEntity<Object> deleteUserWorkspaceById(@PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId){
-        var workspace = workspaceResource.findById(workspaceId);
-        if(workspace.isEmpty())
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Workspace Not Found");
+    public ResponseEntity<String> deleteUserWorkspaceById(@PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId){
         if(!authorizationResource.itIsUserWorkspace(id, workspaceId))
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Action Not Allowed");
+            throw new ActionNotAllowedException();
         workspaceResource.deleteById(workspaceId);
         return ResponseEntity.status(HttpStatus.OK).body("Workspace Deleted");
     }
 
     @GetMapping
-    public ResponseEntity<Object> getAllUserWorkspaces(@PathVariable(name = "id") int id){
-        var user = userResource.findById(id);
-        if(user.isEmpty())
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User Not Found");
-        return ResponseEntity.status(HttpStatus.OK).body(user.get().getWorkspaces());
+    public ResponseEntity<List<WorkspaceModel>> getAllUserWorkspaces(@PathVariable(name = "id") int id){
+        return ResponseEntity.status(HttpStatus.OK).body(userResource.findById(id).getWorkspaces());
     }
 
 

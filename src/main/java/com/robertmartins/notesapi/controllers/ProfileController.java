@@ -1,6 +1,7 @@
 package com.robertmartins.notesapi.controllers;
 
 import com.robertmartins.notesapi.dtos.UserProfileDto;
+import com.robertmartins.notesapi.models.ProfileModel;
 import com.robertmartins.notesapi.models.UserModel;
 import com.robertmartins.notesapi.resources.ProfileResource;
 import com.robertmartins.notesapi.resources.UserResource;
@@ -24,11 +25,8 @@ public class ProfileController {
     private UserResource userResource;
 
     @PutMapping
-    public ResponseEntity<Object> updateUserProfileById(@PathVariable(name = "id") int id, @RequestBody @Valid UserProfileDto profileDto){
-        Optional<UserModel> user = userResource.findById(id);
-        if(user.isEmpty())
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User Not Found");
-        return ResponseEntity.status(HttpStatus.CREATED).body(profileResource.update(profileDto, id));
+    public ResponseEntity<ProfileModel> updateUserProfileById(@PathVariable(name = "id") int profileId, @RequestBody @Valid UserProfileDto profileDto){
+        return ResponseEntity.status(HttpStatus.CREATED).body(profileResource.update(profileDto, profileId));
     }
 
 }

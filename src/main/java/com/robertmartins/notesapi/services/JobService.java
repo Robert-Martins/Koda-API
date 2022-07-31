@@ -1,6 +1,7 @@
 package com.robertmartins.notesapi.services;
 
 import com.robertmartins.notesapi.dtos.JobDto;
+import com.robertmartins.notesapi.exceptions.ResourceNotFoundException;
 import com.robertmartins.notesapi.models.JobModel;
 import com.robertmartins.notesapi.repositories.JobRepository;
 import com.robertmartins.notesapi.repositories.JobStatusRepository;
@@ -53,15 +54,16 @@ public class JobService implements JobResource {
     public JobModel update(JobDto jobDto, int jobId){
         var status = jobStatusRepository.findById(jobDto.getStatusId());
         var job = this.findById(jobId);
-        job.get().setName(jobDto.getName());
-        job.get().setDescription(jobDto.getDescription());
-        job.get().setJobStatus(status.get());
-        job.get().setUpdatedAt(new Date());
-        return jobRepository.save(job.get());
+        job.setName(jobDto.getName());
+        job.setDescription(jobDto.getDescription());
+        job.setJobStatus(status.get());
+        job.setUpdatedAt(new Date());
+        return jobRepository.save(job);
     }
 
-    public Optional<JobModel> findById(int id){
-        return jobRepository.findById(id);
+    public JobModel findById(int id){
+        return jobRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Job Not Found"));
     }
 
     public void delete(int id){

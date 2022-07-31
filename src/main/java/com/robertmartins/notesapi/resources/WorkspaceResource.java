@@ -14,7 +14,7 @@ public interface WorkspaceResource {
 
     WorkspaceModel update(NewWorkspaceDto workspaceDto, int workspaceId);
 
-    Optional<WorkspaceModel> findById(int id);
+    WorkspaceModel findById(int id);
 
     void deleteById(int id);
 

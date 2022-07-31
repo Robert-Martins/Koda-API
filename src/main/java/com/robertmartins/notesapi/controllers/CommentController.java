@@ -21,44 +21,29 @@ public class CommentController {
     private JobResource jobResource;
 
     @PostMapping
-    public ResponseEntity<Object> save(@PathVariable(name = "id") int id ,@PathVariable(name = "jobId") int jobId, CommentDto commentDto){
-        var job = jobResource.findById(jobId);
-        if(job.isEmpty())
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Job Not Found");
+    public ResponseEntity<Object> save(@PathVariable(name = "id") int id ,@PathVariable(name = "jobId") int jobId, @RequestBody @Valid CommentDto commentDto){
         return ResponseEntity.status(HttpStatus.CREATED).body(commentResource.save(commentDto, id, jobId));
     }
 
     @GetMapping("/{commentId}")
-    public ResponseEntity<Object> getById(@PathVariable(name = "commentId") int id){
-        var comment = commentResource.findById(id);
-        if(comment.isEmpty())
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Comment Not Found");
-        return ResponseEntity.status(HttpStatus.OK).body(comment);
+    public ResponseEntity<Object> getById(@PathVariable(name = "commentId") int commentId){
+        return ResponseEntity.status(HttpStatus.OK).body(commentResource.findById(commentId));
     }
 
     @PutMapping("/{commentId}")
-    public ResponseEntity<Object> updateById(@PathVariable(name = "commentId") int id, @RequestBody @Valid CommentDto commentDto){
-        var comment = commentResource.findById(id);
-        if(comment.isEmpty())
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Comment Not Found");
-        return ResponseEntity.status(HttpStatus.OK).body(commentResource.update(commentDto, id));
+    public ResponseEntity<Object> updateById(@PathVariable(name = "commentId") int commentId, @RequestBody @Valid CommentDto commentDto){
+        return ResponseEntity.status(HttpStatus.OK).body(commentResource.update(commentDto, commentId));
     }
 
     @DeleteMapping("/{commentId}")
-    public ResponseEntity<Object> deleteById(@PathVariable(name = "commentId") int id){
-        var comment = commentResource.findById(id);
-        if(comment.isEmpty())
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Comment Not Found");
-        commentResource.delete(id);
+    public ResponseEntity<Object> deleteById(@PathVariable(name = "commentId") int commentId){
+        commentResource.delete(commentId);
         return ResponseEntity.status(HttpStatus.OK).body("Comment Deleted");
     }
 
     @GetMapping
     public ResponseEntity<Object> findAllCommentsInAJob(@PathVariable(name = "jobId") int jobId){
-        var job = jobResource.findById(jobId);
-        if(job.isEmpty())
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Job Not Found");
-        return ResponseEntity.status(HttpStatus.OK).body(job.get().getComments());
+        return ResponseEntity.status(HttpStatus.OK).body(jobResource.findById(jobId).getComments());
     }
 
 }

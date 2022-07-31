@@ -16,6 +16,6 @@ public interface CommentResource {
 
     void delete(int id);
 
-    Optional<CommentModel> findById(int id);
+    CommentModel findById(int id);
 
 }

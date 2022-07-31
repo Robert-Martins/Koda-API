@@ -1,12 +1,12 @@
 package com.robertmartins.notesapi.services;
 
+import com.robertmartins.notesapi.exceptions.ResourceNotFoundException;
 import com.robertmartins.notesapi.models.JobStatusModel;
 import com.robertmartins.notesapi.models.WorkspaceModel;
 import com.robertmartins.notesapi.resources.AuthorizationResource;
 import com.robertmartins.notesapi.resources.UserResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 @Component
 public class AuthorizationService implements AuthorizationResource {
@@ -16,7 +16,7 @@ public class AuthorizationService implements AuthorizationResource {
 
     public boolean itIsUserWorkspace(int id, int workspaceId){
         var user = userResource.findById(id);
-        var workspaceList = user.get().getWorkspaces();
+        var workspaceList = user.getWorkspaces();
         for(WorkspaceModel workspace : workspaceList){
             if(workspace.getId() == workspaceId)
                 return true;
@@ -26,7 +26,7 @@ public class AuthorizationService implements AuthorizationResource {
 
     public boolean itIsUserWorkspaceStatus(int id, int statusId){
         var user = userResource.findById(id);
-        var workspaceList = user.get().getWorkspaces();
+        var workspaceList = user.getWorkspaces();
         for(WorkspaceModel workspace : workspaceList){
             var statusList = workspace.getJobStatus();
             for(JobStatusModel status : statusList){
@@ -39,7 +39,7 @@ public class AuthorizationService implements AuthorizationResource {
 
     public boolean itIsUserAddress(int id, int addressId){
         var user = userResource.findById(id);
-        var userAddressId = user.get().getProfile().getAddress().getId();
+        var userAddressId = user.getProfile().getAddress().getId();
         if(userAddressId == addressId)
             return true;
         return false;

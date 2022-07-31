@@ -2,6 +2,7 @@ package com.robertmartins.notesapi.services;
 
 import com.robertmartins.notesapi.dtos.ProfileDto;
 import com.robertmartins.notesapi.dtos.UserProfileDto;
+import com.robertmartins.notesapi.exceptions.ResourceNotFoundException;
 import com.robertmartins.notesapi.models.AddressModel;
 import com.robertmartins.notesapi.models.ProfileModel;
 import com.robertmartins.notesapi.models.UserModel;
@@ -42,8 +43,9 @@ public class ProfileService implements ProfileResource {
         return profileRepository.save(profile);
     }
 
-    private Optional<ProfileModel> findById(int id){
-        return profileRepository.findById(id);
+    private ProfileModel findById(int id){
+        return profileRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Profile Not Found"));
     }
 
     public ProfileModel setProfile(ProfileDto profileDto, AddressModel addressModel){

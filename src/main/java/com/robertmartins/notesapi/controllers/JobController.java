@@ -1,6 +1,8 @@
 package com.robertmartins.notesapi.controllers;
 
 import com.robertmartins.notesapi.dtos.JobDto;
+import com.robertmartins.notesapi.exceptions.ActionNotAllowedException;
+import com.robertmartins.notesapi.models.JobModel;
 import com.robertmartins.notesapi.resources.AuthorizationResource;
 import com.robertmartins.notesapi.resources.JobResource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Date;
 
 @RestController
 @RequestMapping("/user/{id}/workspace/{workspaceId}/jobs")
@@ -22,28 +23,25 @@ public class JobController {
     private AuthorizationResource authorizationResource;
 
     @PostMapping
-    public ResponseEntity<Object> save(@PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId, @RequestBody @Valid JobDto jobDto){
+    public ResponseEntity<JobModel> save(@PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId, @RequestBody @Valid JobDto jobDto){
         if(!authorizationResource.itIsUserWorkspace(id, workspaceId))
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Action Not Allowed");
+            throw new ActionNotAllowedException();
         return ResponseEntity.status(HttpStatus.CREATED).body(jobResource.save(jobDto, id, workspaceId));
     }
 
     @GetMapping("/{jobId}")
-    public ResponseEntity<Object> getJobById(@PathVariable(name = "jobId") int id){
-        var job = jobResource.findById(id);
-        if(job.isEmpty())
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Job Not Found");
-        return ResponseEntity.status(HttpStatus.OK).body(job.get());
+    public ResponseEntity<JobModel> getJobById(@PathVariable(name = "jobId") int jobId){
+        return ResponseEntity.status(HttpStatus.OK).body(jobResource.findById(jobId));
     }
 
     @PutMapping("/{jobId}")
-    public ResponseEntity<Object> updateJobById(@PathVariable(name = "jobId") int id, @RequestBody @Valid JobDto jobDto){
-        return ResponseEntity.status(HttpStatus.CREATED).body(jobResource.update(jobDto, id));
+    public ResponseEntity<JobModel> updateJobById(@PathVariable(name = "jobId") int jobId, @RequestBody @Valid JobDto jobDto){
+        return ResponseEntity.status(HttpStatus.CREATED).body(jobResource.update(jobDto, jobId));
     }
 
     @DeleteMapping("/{jobId}")
-    public ResponseEntity<Object> deleteJobById(@PathVariable(name = "jobId") int id){
-        jobResource.delete(id);
+    public ResponseEntity<String> deleteJobById(@PathVariable(name = "jobId") int jobId){
+        jobResource.delete(jobId);
         return ResponseEntity.status(HttpStatus.OK).body("Job Deleted");
     }
 

@@ -14,10 +14,4 @@ public class CommentDto {
     @Size(max = 255)
     private String comment;
 
-    @NotNull
-    private int userId;
-
-    @NotNull
-    private int jobId;
-
 }
