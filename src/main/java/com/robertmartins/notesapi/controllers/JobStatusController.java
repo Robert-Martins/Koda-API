@@ -1,5 +1,6 @@
 package com.robertmartins.notesapi.controllers;
 
+import com.robertmartins.notesapi.dtos.DeletedResourceDto;
 import com.robertmartins.notesapi.dtos.JobStatusDto;
 import com.robertmartins.notesapi.exceptions.ActionNotAllowedException;
 import com.robertmartins.notesapi.models.JobStatusModel;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/user/{id}/workspace/{workspaceId}/status")
@@ -48,11 +50,16 @@ public class JobStatusController {
     }
 
     @DeleteMapping("/{statusId}")
-    public ResponseEntity<String> deleteStatusById(@PathVariable(name = "id")int id, @PathVariable(name = "statusId") int statusId){
+    public ResponseEntity<DeletedResourceDto> deleteStatusById(@PathVariable(name = "id")int id, @PathVariable(name = "statusId") int statusId){
         if(!authorizationResource.itIsUserWorkspaceStatus(id, statusId))
             throw new ActionNotAllowedException();
         jobStatusResource.deleteById(statusId);
-        return ResponseEntity.status(HttpStatus.OK).body("Status Deleted");
+        return ResponseEntity.status(HttpStatus.OK).body(
+                DeletedResourceDto.builder()
+                        .message("User Deleted")
+                        .timestamp(LocalDateTime.now())
+                        .build()
+        );
     }
 
 }

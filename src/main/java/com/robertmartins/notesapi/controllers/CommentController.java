@@ -1,6 +1,7 @@
 package com.robertmartins.notesapi.controllers;
 
 import com.robertmartins.notesapi.dtos.CommentDto;
+import com.robertmartins.notesapi.dtos.DeletedResourceDto;
 import com.robertmartins.notesapi.resources.CommentResource;
 import com.robertmartins.notesapi.resources.JobResource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/user/{id}/workspace/{workspaceId}/jobs/{jobId}/comments")
@@ -36,9 +38,14 @@ public class CommentController {
     }
 
     @DeleteMapping("/{commentId}")
-    public ResponseEntity<Object> deleteById(@PathVariable(name = "commentId") int commentId){
+    public ResponseEntity<DeletedResourceDto> deleteById(@PathVariable(name = "commentId") int commentId){
         commentResource.delete(commentId);
-        return ResponseEntity.status(HttpStatus.OK).body("Comment Deleted");
+        return ResponseEntity.status(HttpStatus.OK).body(
+                DeletedResourceDto.builder()
+                        .message("Comment Deleted")
+                        .timestamp(LocalDateTime.now())
+                        .build()
+        );
     }
 
     @GetMapping

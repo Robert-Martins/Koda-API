@@ -1,5 +1,6 @@
 package com.robertmartins.notesapi.controllers;
 
+import com.robertmartins.notesapi.dtos.DeletedResourceDto;
 import com.robertmartins.notesapi.dtos.UserCredentialsDto;
 import com.robertmartins.notesapi.dtos.UserDto;
 import com.robertmartins.notesapi.resources.UserResource;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -33,9 +35,14 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteUserById(@PathVariable(name = "id") int id){
+    public ResponseEntity<DeletedResourceDto> deleteUserById(@PathVariable(name = "id") int id){
         userResource.deleteById(id);
-        return ResponseEntity.status(HttpStatus.OK).body("User deleted");
+        return ResponseEntity.status(HttpStatus.OK).body(
+                DeletedResourceDto.builder()
+                        .message("User Deleted")
+                        .timestamp(LocalDateTime.now())
+                        .build()
+        );
     }
 
 }
