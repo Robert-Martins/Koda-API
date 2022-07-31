@@ -19,8 +19,6 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<Object> save(@RequestBody @Valid UserDto userDto){
-        if(userResource.existsByLogin(userDto.getProfile().getEmail()))
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflict: Email already in use");
         return ResponseEntity.status(HttpStatus.CREATED).body(userResource.save(userDto));
     }
 

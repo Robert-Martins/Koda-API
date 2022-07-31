@@ -2,8 +2,10 @@ package com.robertmartins.notesapi.services;
 
 import com.robertmartins.notesapi.dtos.UserCredentialsDto;
 import com.robertmartins.notesapi.dtos.UserDto;
+import com.robertmartins.notesapi.exceptions.DuplicateKeyException;
 import com.robertmartins.notesapi.exceptions.ResourceNotFoundException;
 import com.robertmartins.notesapi.models.UserModel;
+import com.robertmartins.notesapi.repositories.ProfileRepository;
 import com.robertmartins.notesapi.repositories.UserRepository;
 import com.robertmartins.notesapi.resources.AddressResource;
 import com.robertmartins.notesapi.resources.UserResource;
@@ -22,9 +24,16 @@ public class UserService implements UserResource {
     private AddressResource addressResource;
 
     @Autowired
+    private ProfileRepository profileRepository;
+
+    @Autowired
     private ProfileService profileService;
 
     public UserModel save(UserDto userDto){
+        if(profileRepository.existsByEmail(userDto.getProfile().getEmail()))
+            throw new DuplicateKeyException("Conflict: Email already in use");
+        if(userRepository.existsByLogin(userDto.getProfile().getEmail()))
+            throw new DuplicateKeyException("Conflict: Login already in use");
         var user = new UserModel();
         var address = addressResource.setAddress(userDto.getProfile().getAddress());
         var profile = profileService.setProfile(userDto.getProfile(), address);
@@ -41,6 +50,8 @@ public class UserService implements UserResource {
     }
 
     public UserModel updateCredentials(UserCredentialsDto userCredentialsDto, int id){
+        if(userRepository.existsByLogin(userCredentialsDto.getLogin()))
+            throw new DuplicateKeyException("Conflict: Login already in use");
         var user = this.findById(id);
         user.setLogin(userCredentialsDto.getLogin());
         user.setPassword(userCredentialsDto.getPassword());
