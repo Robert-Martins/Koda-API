@@ -1,6 +1,5 @@
 package com.robertmartins.notesapi.resources;
 
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -8,7 +7,11 @@ public interface AuthorizationResource {
 
     boolean itIsUserWorkspace(int id, int workspaceId);
 
-    boolean itIsUserWorkspaceStatus(int id, int statusId);
+    boolean itIsWorkspaceStatus(int workspaceId, int jobStatusId);
+
+    boolean itIsWorkspaceJob(int workspaceId, int jobId);
+
+    boolean itIsJobComment(int jobId, int commentId);
 
     boolean itIsUserAddress(int id, int addressId);
 

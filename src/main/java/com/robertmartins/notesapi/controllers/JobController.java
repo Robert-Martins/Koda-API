@@ -37,12 +37,20 @@ public class JobController {
     }
 
     @PutMapping("/{jobId}")
-    public ResponseEntity<JobModel> updateJobById(@PathVariable(name = "jobId") int jobId, @RequestBody @Valid JobDto jobDto){
+    public ResponseEntity<JobModel> updateJobById(@PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId, @PathVariable(name = "jobId") int jobId, @RequestBody @Valid JobDto jobDto){
+        if(!authorizationResource.itIsUserWorkspace(id, workspaceId))
+            throw new ActionNotAllowedException();
+        if(!authorizationResource.itIsWorkspaceJob(workspaceId, jobId))
+            throw new ActionNotAllowedException();
         return ResponseEntity.status(HttpStatus.CREATED).body(jobResource.update(jobDto, jobId));
     }
 
     @DeleteMapping("/{jobId}")
-    public ResponseEntity<DeletedResourceDto> deleteJobById(@PathVariable(name = "jobId") int jobId){
+    public ResponseEntity<DeletedResourceDto> deleteJobById(@PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId, @PathVariable(name = "jobId") int jobId){
+        if(!authorizationResource.itIsUserWorkspace(id, workspaceId))
+            throw new ActionNotAllowedException();
+        if(!authorizationResource.itIsWorkspaceJob(workspaceId, jobId))
+            throw new ActionNotAllowedException();
         jobResource.delete(jobId);
         return ResponseEntity.status(HttpStatus.OK).body(
                 DeletedResourceDto.builder()

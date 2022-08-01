@@ -3,6 +3,7 @@ package com.robertmartins.notesapi.controllers;
 import com.robertmartins.notesapi.dtos.DeletedResourceDto;
 import com.robertmartins.notesapi.dtos.UserCredentialsDto;
 import com.robertmartins.notesapi.dtos.UserDto;
+import com.robertmartins.notesapi.models.UserModel;
 import com.robertmartins.notesapi.resources.UserResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,17 +21,17 @@ public class UserController {
     private UserResource userResource;
 
     @PostMapping
-    public ResponseEntity<Object> save(@RequestBody @Valid UserDto userDto){
+    public ResponseEntity<UserModel> save(@RequestBody @Valid UserDto userDto){
         return ResponseEntity.status(HttpStatus.CREATED).body(userResource.save(userDto));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getUserById(@PathVariable(name = "id") int id){
+    public ResponseEntity<UserModel> getUserById(@PathVariable(name = "id") int id){
         return ResponseEntity.status(HttpStatus.OK).body(userResource.findById(id));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Object> updateUserCredentialsById(@PathVariable(name = "id") int id, @RequestBody @Valid UserCredentialsDto userCredentials){
+    public ResponseEntity<UserModel> updateUserCredentialsById(@PathVariable(name = "id") int id, @RequestBody @Valid UserCredentialsDto userCredentials){
         return ResponseEntity.status(HttpStatus.CREATED).body(userResource.updateCredentials(userCredentials, id));
     }
 

@@ -37,21 +37,23 @@ public class JobStatusController {
 
     @GetMapping("/{statusId}")
     public ResponseEntity<JobStatusModel> getJobStatus(@PathVariable(name = "id")int id, @PathVariable(name = "statusId") int statusId){
-        if(!authorizationResource.itIsUserWorkspaceStatus(id, statusId))
-            throw new ActionNotAllowedException();
         return ResponseEntity.status(HttpStatus.OK).body(jobStatusResource.findById(statusId));
     }
 
     @PutMapping("/{statusId}")
-    public ResponseEntity<JobStatusModel> updateStatusById(@PathVariable(name = "id")int id, @PathVariable(name = "statusId") int statusId, @RequestBody @Valid JobStatusDto jobStatusDto){
-        if(!authorizationResource.itIsUserWorkspaceStatus(id, statusId))
+    public ResponseEntity<JobStatusModel> updateStatusById(@PathVariable(name = "id")int id, @PathVariable(name = "workspaceId") int workspaceId, @PathVariable(name = "statusId") int statusId, @RequestBody @Valid JobStatusDto jobStatusDto){
+        if(!authorizationResource.itIsUserWorkspace(id, workspaceId))
+            throw new ActionNotAllowedException();
+        if(!authorizationResource.itIsWorkspaceStatus(workspaceId, statusId))
             throw new ActionNotAllowedException();
         return ResponseEntity.status(HttpStatus.CREATED).body(jobStatusResource.update(jobStatusDto, statusId));
     }
 
     @DeleteMapping("/{statusId}")
-    public ResponseEntity<DeletedResourceDto> deleteStatusById(@PathVariable(name = "id")int id, @PathVariable(name = "statusId") int statusId){
-        if(!authorizationResource.itIsUserWorkspaceStatus(id, statusId))
+    public ResponseEntity<DeletedResourceDto> deleteStatusById(@PathVariable(name = "id")int id, @PathVariable(name = "workspaceId") int workspaceId, @PathVariable(name = "statusId") int statusId){
+        if(!authorizationResource.itIsUserWorkspace(id, workspaceId))
+            throw new ActionNotAllowedException();
+        if(!authorizationResource.itIsWorkspaceStatus(workspaceId, statusId))
             throw new ActionNotAllowedException();
         jobStatusResource.deleteById(statusId);
         return ResponseEntity.status(HttpStatus.OK).body(
