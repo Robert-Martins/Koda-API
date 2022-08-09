@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Builder
-public class DeletedResourceDto {
+public class ClientResponseDto {
 
     private String message;
 

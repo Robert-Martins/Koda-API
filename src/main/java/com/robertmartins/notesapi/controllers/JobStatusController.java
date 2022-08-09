@@ -1,6 +1,6 @@
 package com.robertmartins.notesapi.controllers;
 
-import com.robertmartins.notesapi.dtos.DeletedResourceDto;
+import com.robertmartins.notesapi.dtos.ClientResponseDto;
 import com.robertmartins.notesapi.dtos.JobStatusDto;
 import com.robertmartins.notesapi.exceptions.ActionNotAllowedException;
 import com.robertmartins.notesapi.models.JobStatusModel;
@@ -50,14 +50,14 @@ public class JobStatusController {
     }
 
     @DeleteMapping("/{statusId}")
-    public ResponseEntity<DeletedResourceDto> deleteStatusById(@PathVariable(name = "id")int id, @PathVariable(name = "workspaceId") int workspaceId, @PathVariable(name = "statusId") int statusId){
+    public ResponseEntity<ClientResponseDto> deleteStatusById(@PathVariable(name = "id")int id, @PathVariable(name = "workspaceId") int workspaceId, @PathVariable(name = "statusId") int statusId){
         if(!authorizationResource.itIsUserWorkspace(id, workspaceId))
             throw new ActionNotAllowedException();
         if(!authorizationResource.itIsWorkspaceStatus(workspaceId, statusId))
             throw new ActionNotAllowedException();
         jobStatusResource.deleteById(statusId);
         return ResponseEntity.status(HttpStatus.OK).body(
-                DeletedResourceDto.builder()
+                ClientResponseDto.builder()
                         .message("User Deleted")
                         .timestamp(LocalDateTime.now())
                         .build()

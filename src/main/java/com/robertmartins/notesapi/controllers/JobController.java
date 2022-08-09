@@ -1,6 +1,6 @@
 package com.robertmartins.notesapi.controllers;
 
-import com.robertmartins.notesapi.dtos.DeletedResourceDto;
+import com.robertmartins.notesapi.dtos.ClientResponseDto;
 import com.robertmartins.notesapi.dtos.JobDto;
 import com.robertmartins.notesapi.exceptions.ActionNotAllowedException;
 import com.robertmartins.notesapi.models.JobModel;
@@ -46,14 +46,14 @@ public class JobController {
     }
 
     @DeleteMapping("/{jobId}")
-    public ResponseEntity<DeletedResourceDto> deleteJobById(@PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId, @PathVariable(name = "jobId") int jobId){
+    public ResponseEntity<ClientResponseDto> deleteJobById(@PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId, @PathVariable(name = "jobId") int jobId){
         if(!authorizationResource.itIsUserWorkspace(id, workspaceId))
             throw new ActionNotAllowedException();
         if(!authorizationResource.itIsWorkspaceJob(workspaceId, jobId))
             throw new ActionNotAllowedException();
         jobResource.delete(jobId);
         return ResponseEntity.status(HttpStatus.OK).body(
-                DeletedResourceDto.builder()
+                ClientResponseDto.builder()
                         .message("User Deleted")
                         .timestamp(LocalDateTime.now())
                         .build()

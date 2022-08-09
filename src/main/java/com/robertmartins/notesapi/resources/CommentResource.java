@@ -1,11 +1,11 @@
 package com.robertmartins.notesapi.resources;
 
 import com.robertmartins.notesapi.dtos.CommentDto;
+import com.robertmartins.notesapi.dtos.CommentReadDto;
 import com.robertmartins.notesapi.models.CommentModel;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.List;
 
 @Service
 public interface CommentResource {
@@ -17,5 +17,9 @@ public interface CommentResource {
     void delete(int id);
 
     CommentModel findById(int id);
+
+    CommentReadDto getById(int id);
+
+    List<CommentReadDto> getAllCommentsInAJob(int jobId);
 
 }

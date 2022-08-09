@@ -1,6 +1,6 @@
 package com.robertmartins.notesapi.controllers;
 
-import com.robertmartins.notesapi.dtos.DeletedResourceDto;
+import com.robertmartins.notesapi.dtos.ClientResponseDto;
 import com.robertmartins.notesapi.dtos.UserCredentialsDto;
 import com.robertmartins.notesapi.dtos.UserDto;
 import com.robertmartins.notesapi.models.UserModel;
@@ -36,10 +36,10 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<DeletedResourceDto> deleteUserById(@PathVariable(name = "id") int id){
+    public ResponseEntity<ClientResponseDto> deleteUserById(@PathVariable(name = "id") int id){
         userResource.deleteById(id);
         return ResponseEntity.status(HttpStatus.OK).body(
-                DeletedResourceDto.builder()
+                ClientResponseDto.builder()
                         .message("User Deleted")
                         .timestamp(LocalDateTime.now())
                         .build()

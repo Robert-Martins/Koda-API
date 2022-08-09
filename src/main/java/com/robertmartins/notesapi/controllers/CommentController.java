@@ -1,7 +1,9 @@
 package com.robertmartins.notesapi.controllers;
 
+import com.robertmartins.notesapi.dtos.ClientResponseDto;
 import com.robertmartins.notesapi.dtos.CommentDto;
-import com.robertmartins.notesapi.dtos.DeletedResourceDto;
+import com.robertmartins.notesapi.dtos.CommentReadDto;
+import com.robertmartins.notesapi.dtos.PaginatedResponseDto;
 import com.robertmartins.notesapi.exceptions.ActionNotAllowedException;
 import com.robertmartins.notesapi.models.CommentModel;
 import com.robertmartins.notesapi.resources.AuthorizationResource;
@@ -38,8 +40,8 @@ public class CommentController {
     }
 
     @GetMapping("/{commentId}")
-    public ResponseEntity<CommentModel> getById(@PathVariable(name = "commentId") int commentId){
-        return ResponseEntity.status(HttpStatus.OK).body(commentResource.findById(commentId));
+    public ResponseEntity<CommentReadDto> getById(@PathVariable(name = "commentId") int commentId){
+        return ResponseEntity.status(HttpStatus.OK).body(commentResource.getById(commentId));
     }
 
     @PutMapping("/{commentId}")
@@ -54,7 +56,7 @@ public class CommentController {
     }
 
     @DeleteMapping("/{commentId}")
-    public ResponseEntity<DeletedResourceDto> deleteById(@PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId ,@PathVariable(name = "jobId") int jobId, @PathVariable(name = "commentId") int commentId){
+    public ResponseEntity<ClientResponseDto> deleteById(@PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId , @PathVariable(name = "jobId") int jobId, @PathVariable(name = "commentId") int commentId){
         if(!authorizationResource.itIsUserWorkspace(id, workspaceId))
             throw new ActionNotAllowedException();
         if(!authorizationResource.itIsWorkspaceJob(workspaceId, jobId))
@@ -63,7 +65,7 @@ public class CommentController {
             throw new ActionNotAllowedException();
         commentResource.delete(commentId);
         return ResponseEntity.status(HttpStatus.OK).body(
-                DeletedResourceDto.builder()
+                ClientResponseDto.builder()
                         .message("Comment Deleted")
                         .timestamp(LocalDateTime.now())
                         .build()
@@ -71,8 +73,20 @@ public class CommentController {
     }
 
     @GetMapping
-    public ResponseEntity<Object> findAllCommentsInAJob(@PathVariable(name = "jobId") int jobId){
-        return ResponseEntity.status(HttpStatus.OK).body(jobResource.findById(jobId).getComments());
+    public ResponseEntity<PaginatedResponseDto> findAllCommentsInAJob(@PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId ,@PathVariable(name = "jobId") int jobId){
+        if(!authorizationResource.itIsUserWorkspace(id, workspaceId))
+            throw new ActionNotAllowedException();
+        if(!authorizationResource.itIsWorkspaceJob(workspaceId, jobId))
+            throw new ActionNotAllowedException();
+        return ResponseEntity.status(HttpStatus.OK).body(PaginatedResponseDto.builder()
+                .content(commentResource.getAllCommentsInAJob(jobId))
+                .itemsPerPage(0)
+                .page(0)
+                .order("")
+                .orderedBy("")
+                .timestamp(LocalDateTime.now())
+                .build()
+        );
     }
 
 }

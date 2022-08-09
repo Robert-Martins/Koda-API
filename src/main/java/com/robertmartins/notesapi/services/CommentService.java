@@ -1,6 +1,8 @@
 package com.robertmartins.notesapi.services;
 
 import com.robertmartins.notesapi.dtos.CommentDto;
+import com.robertmartins.notesapi.dtos.CommentReadDto;
+import com.robertmartins.notesapi.dtos.UserReadDto;
 import com.robertmartins.notesapi.exceptions.ResourceNotFoundException;
 import com.robertmartins.notesapi.models.CommentModel;
 import com.robertmartins.notesapi.repositories.CommentRepository;
@@ -10,7 +12,9 @@ import com.robertmartins.notesapi.resources.UserResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Component
 public class CommentService implements CommentResource{
@@ -45,6 +49,19 @@ public class CommentService implements CommentResource{
                 .orElseThrow(() -> new ResourceNotFoundException("Comment Not Found"));
     }
 
+    public CommentReadDto getById(int id){
+        var comment = commentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Comment Not Found"));
+        return this.normalizeComment(comment);
+    }
+
+    public List<CommentReadDto> getAllCommentsInAJob(int id){
+        var comments = jobResource.findById(id).getComments();
+        List<CommentReadDto> readables = new ArrayList<>();
+        comments.stream().forEach(comment -> readables.add(this.normalizeComment(comment)));
+        return readables;
+    }
+
     private CommentModel setComment(CommentDto commentDto, int userId, int jobId){
         var user = userResource.findById(userId);
         var job = jobResource.findById(jobId);
@@ -55,6 +72,17 @@ public class CommentService implements CommentResource{
         comment.setUpdatedAt(new Date());
         comment.setCreatedAt(new Date());
         return comment;
+    }
+
+    private CommentReadDto normalizeComment(CommentModel comment){
+        var user = comment.getUser();
+        return CommentReadDto.builder()
+                .id(comment.getId())
+                .comment(comment.getComment())
+                .user(new UserReadDto(user.getId(), user.getProfile().getName()))
+                .createdAt(comment.getCreatedAt())
+                .updateAt(comment.getUpdatedAt())
+                .build();
     }
 
 }
