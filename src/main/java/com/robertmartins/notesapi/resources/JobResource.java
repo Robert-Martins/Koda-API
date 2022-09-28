@@ -11,8 +11,6 @@ public interface JobResource {
 
     JobModel update(JobDto jobDto, int jobId);
 
-    void delete(int id);
-
     JobModel findById(int id);
 
     boolean jobExists(int id);

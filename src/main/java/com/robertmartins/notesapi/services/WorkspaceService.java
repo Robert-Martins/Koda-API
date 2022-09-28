@@ -4,6 +4,7 @@ import com.robertmartins.notesapi.dtos.NewWorkspaceDto;
 import com.robertmartins.notesapi.exceptions.ResourceNotFoundException;
 import com.robertmartins.notesapi.models.WorkspaceModel;
 import com.robertmartins.notesapi.repositories.WorkspaceRepository;
+import com.robertmartins.notesapi.resources.JobResource;
 import com.robertmartins.notesapi.resources.JobStatusResource;
 import com.robertmartins.notesapi.resources.UserResource;
 import com.robertmartins.notesapi.resources.WorkspaceResource;
@@ -21,6 +22,9 @@ public class WorkspaceService implements WorkspaceResource {
 
     @Autowired
     private UserResource userResource;
+
+    @Autowired
+    private JobResource jobResource;
 
     @Autowired
     private JobStatusResource jobStatusResource;
@@ -52,6 +56,12 @@ public class WorkspaceService implements WorkspaceResource {
     public WorkspaceModel findById(int id){
         return workspaceRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Workspace Not Found"));
+    }
+
+    public void deleteJobById(int workspaceId, int id){
+        var workspace = this.findById(workspaceId);
+        workspace.getJobs().remove(jobResource.findById(id));
+        workspaceRepository.save(workspace);
     }
 
     public void deleteStatusById(int workspaceId, int id){

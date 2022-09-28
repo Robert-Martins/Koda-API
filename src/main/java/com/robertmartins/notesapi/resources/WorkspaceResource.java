@@ -15,6 +15,7 @@ public interface WorkspaceResource {
 
     void deleteById(int workspaceId, int id);
 
+    void deleteJobById(int workspaceId, int id);
     void deleteStatusById(int workspaceId, int id);
 
     boolean workspaceExists(int id);

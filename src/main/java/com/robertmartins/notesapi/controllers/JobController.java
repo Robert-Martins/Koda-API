@@ -7,6 +7,7 @@ import com.robertmartins.notesapi.exceptions.ResourceNotFoundException;
 import com.robertmartins.notesapi.models.JobModel;
 import com.robertmartins.notesapi.resources.AuthorizationResource;
 import com.robertmartins.notesapi.resources.JobResource;
+import com.robertmartins.notesapi.resources.WorkspaceResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,9 @@ import java.time.LocalDateTime;
 @RestController
 @RequestMapping("/user/{id}/workspace/{workspaceId}/jobs")
 public class JobController {
+
+    @Autowired
+    private WorkspaceResource workspaceResource;
 
     @Autowired
     private JobResource jobResource;
@@ -56,10 +60,10 @@ public class JobController {
             throw new ActionNotAllowedException();
         if(!authorizationResource.itIsWorkspaceJob(workspaceId, jobId))
             throw new ActionNotAllowedException();
-        jobResource.delete(jobId);
+        workspaceResource.deleteJobById(workspaceId, jobId);
         return ResponseEntity.status(HttpStatus.OK).body(
                 ClientResponseDto.builder()
-                        .message("User Deleted")
+                        .message("Job Deleted")
                         .timestamp(LocalDateTime.now())
                         .build()
         );

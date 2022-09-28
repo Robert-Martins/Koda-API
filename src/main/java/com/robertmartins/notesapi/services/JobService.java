@@ -8,15 +8,10 @@ import com.robertmartins.notesapi.repositories.JobStatusRepository;
 import com.robertmartins.notesapi.repositories.UserRepository;
 import com.robertmartins.notesapi.repositories.WorkspaceRepository;
 import com.robertmartins.notesapi.resources.JobResource;
-import com.robertmartins.notesapi.resources.JobStatusResource;
-import com.robertmartins.notesapi.resources.WorkspaceResource;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.Optional;
 
 @Component
 public class JobService implements JobResource {
@@ -48,7 +43,7 @@ public class JobService implements JobResource {
         jobList.add(job);
         workspace.get().setJobs(jobList);
         workspaceRepository.save(workspace.get());
-        return job;
+        return jobList.get(jobList.size() - 1);
     }
 
     public JobModel update(JobDto jobDto, int jobId){
@@ -64,10 +59,6 @@ public class JobService implements JobResource {
     public JobModel findById(int id){
         return jobRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Job Not Found"));
-    }
-
-    public void delete(int id){
-        jobRepository.deleteById(id);
     }
 
     public boolean jobExists(int id){
