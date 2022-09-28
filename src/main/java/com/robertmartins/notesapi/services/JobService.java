@@ -70,4 +70,8 @@ public class JobService implements JobResource {
         jobRepository.deleteById(id);
     }
 
+    public boolean jobExists(int id){
+        return jobRepository.existsById(id);
+    }
+
 }

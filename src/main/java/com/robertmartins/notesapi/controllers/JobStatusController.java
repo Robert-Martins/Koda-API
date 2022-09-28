@@ -3,6 +3,7 @@ package com.robertmartins.notesapi.controllers;
 import com.robertmartins.notesapi.dtos.ClientResponseDto;
 import com.robertmartins.notesapi.dtos.JobStatusDto;
 import com.robertmartins.notesapi.exceptions.ActionNotAllowedException;
+import com.robertmartins.notesapi.exceptions.ResourceNotFoundException;
 import com.robertmartins.notesapi.models.JobStatusModel;
 import com.robertmartins.notesapi.resources.AuthorizationResource;
 import com.robertmartins.notesapi.resources.JobStatusResource;
@@ -42,6 +43,8 @@ public class JobStatusController {
 
     @PutMapping("/{statusId}")
     public ResponseEntity<JobStatusModel> updateStatusById(@PathVariable(name = "id")int id, @PathVariable(name = "workspaceId") int workspaceId, @PathVariable(name = "statusId") int statusId, @RequestBody @Valid JobStatusDto jobStatusDto){
+        if(!jobStatusResource.jobStatusExists(statusId))
+            throw new ResourceNotFoundException("Status Not Found");
         if(!authorizationResource.itIsUserWorkspace(id, workspaceId))
             throw new ActionNotAllowedException();
         if(!authorizationResource.itIsWorkspaceStatus(workspaceId, statusId))
@@ -51,6 +54,8 @@ public class JobStatusController {
 
     @DeleteMapping("/{statusId}")
     public ResponseEntity<ClientResponseDto> deleteStatusById(@PathVariable(name = "id")int id, @PathVariable(name = "workspaceId") int workspaceId, @PathVariable(name = "statusId") int statusId){
+        if(!jobStatusResource.jobStatusExists(statusId))
+            throw new ResourceNotFoundException("Status Not Found");
         if(!authorizationResource.itIsUserWorkspace(id, workspaceId))
             throw new ActionNotAllowedException();
         if(!authorizationResource.itIsWorkspaceStatus(workspaceId, statusId))

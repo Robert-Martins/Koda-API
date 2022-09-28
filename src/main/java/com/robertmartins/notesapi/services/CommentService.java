@@ -85,4 +85,8 @@ public class CommentService implements CommentResource{
                 .build();
     }
 
+    public boolean commentExists(int id){
+        return commentRepository.existsById(id);
+    }
+
 }

@@ -7,12 +7,9 @@ import com.robertmartins.notesapi.repositories.AddressRepository;
 import com.robertmartins.notesapi.resources.AddressResource;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.Optional;
 
 @Component
 public class AddressService implements AddressResource {
@@ -30,6 +27,10 @@ public class AddressService implements AddressResource {
     private AddressModel findById(int id) {
         return addressRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Address Not Found"));
+    }
+
+    public boolean addressExists(int id) {
+        return addressRepository.existsById(id);
     }
 
     public AddressModel setAddress(AddressDto addressDto){

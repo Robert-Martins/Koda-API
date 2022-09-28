@@ -5,6 +5,7 @@ import com.robertmartins.notesapi.dtos.CommentDto;
 import com.robertmartins.notesapi.dtos.CommentReadDto;
 import com.robertmartins.notesapi.dtos.PaginatedResponseDto;
 import com.robertmartins.notesapi.exceptions.ActionNotAllowedException;
+import com.robertmartins.notesapi.exceptions.ResourceNotFoundException;
 import com.robertmartins.notesapi.models.CommentModel;
 import com.robertmartins.notesapi.resources.AuthorizationResource;
 import com.robertmartins.notesapi.resources.CommentResource;
@@ -46,6 +47,8 @@ public class CommentController {
 
     @PutMapping("/{commentId}")
     public ResponseEntity<CommentModel> updateById(@PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId , @PathVariable(name = "jobId") int jobId, @PathVariable(name = "commentId") int commentId, @RequestBody @Valid CommentDto commentDto){
+        if(!commentResource.commentExists(commentId))
+            throw new ResourceNotFoundException("Comment Not Found");
         if(!authorizationResource.itIsUserWorkspace(id, workspaceId))
             throw new ActionNotAllowedException();
         if(!authorizationResource.itIsWorkspaceJob(workspaceId, jobId))
@@ -57,6 +60,8 @@ public class CommentController {
 
     @DeleteMapping("/{commentId}")
     public ResponseEntity<ClientResponseDto> deleteById(@PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId , @PathVariable(name = "jobId") int jobId, @PathVariable(name = "commentId") int commentId){
+        if(!commentResource.commentExists(commentId))
+            throw new ResourceNotFoundException("Comment Not Found");
         if(!authorizationResource.itIsUserWorkspace(id, workspaceId))
             throw new ActionNotAllowedException();
         if(!authorizationResource.itIsWorkspaceJob(workspaceId, jobId))

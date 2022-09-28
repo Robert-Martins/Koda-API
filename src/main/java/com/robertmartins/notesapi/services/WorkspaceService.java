@@ -60,6 +60,10 @@ public class WorkspaceService implements WorkspaceResource {
         workspaceRepository.save(workspace);
     }
 
+    public boolean workspaceExists(int id){
+        return workspaceRepository.existsById(id);
+    }
+
     public WorkspaceModel setWorkspace(NewWorkspaceDto newWorkspaceDto){
         var workspace = new WorkspaceModel();
         workspace.setName(newWorkspaceDto.getName());

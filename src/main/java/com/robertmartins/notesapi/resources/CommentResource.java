@@ -22,4 +22,6 @@ public interface CommentResource {
 
     List<CommentReadDto> getAllCommentsInAJob(int jobId);
 
+    boolean commentExists(int id);
+
 }

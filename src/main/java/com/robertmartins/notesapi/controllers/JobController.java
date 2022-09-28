@@ -3,6 +3,7 @@ package com.robertmartins.notesapi.controllers;
 import com.robertmartins.notesapi.dtos.ClientResponseDto;
 import com.robertmartins.notesapi.dtos.JobDto;
 import com.robertmartins.notesapi.exceptions.ActionNotAllowedException;
+import com.robertmartins.notesapi.exceptions.ResourceNotFoundException;
 import com.robertmartins.notesapi.models.JobModel;
 import com.robertmartins.notesapi.resources.AuthorizationResource;
 import com.robertmartins.notesapi.resources.JobResource;
@@ -38,6 +39,8 @@ public class JobController {
 
     @PutMapping("/{jobId}")
     public ResponseEntity<JobModel> updateJobById(@PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId, @PathVariable(name = "jobId") int jobId, @RequestBody @Valid JobDto jobDto){
+        if(!jobResource.jobExists(jobId))
+            throw new ResourceNotFoundException("Job Not Found");
         if(!authorizationResource.itIsUserWorkspace(id, workspaceId))
             throw new ActionNotAllowedException();
         if(!authorizationResource.itIsWorkspaceJob(workspaceId, jobId))
@@ -47,6 +50,8 @@ public class JobController {
 
     @DeleteMapping("/{jobId}")
     public ResponseEntity<ClientResponseDto> deleteJobById(@PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId, @PathVariable(name = "jobId") int jobId){
+        if(!jobResource.jobExists(jobId))
+            throw new ResourceNotFoundException("Job Not Found");
         if(!authorizationResource.itIsUserWorkspace(id, workspaceId))
             throw new ActionNotAllowedException();
         if(!authorizationResource.itIsWorkspaceJob(workspaceId, jobId))

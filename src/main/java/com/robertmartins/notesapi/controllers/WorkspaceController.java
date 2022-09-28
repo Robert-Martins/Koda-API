@@ -3,6 +3,7 @@ package com.robertmartins.notesapi.controllers;
 import com.robertmartins.notesapi.dtos.ClientResponseDto;
 import com.robertmartins.notesapi.dtos.NewWorkspaceDto;
 import com.robertmartins.notesapi.exceptions.ActionNotAllowedException;
+import com.robertmartins.notesapi.exceptions.ResourceNotFoundException;
 import com.robertmartins.notesapi.models.WorkspaceModel;
 import com.robertmartins.notesapi.resources.AuthorizationResource;
 import com.robertmartins.notesapi.resources.UserResource;
@@ -37,13 +38,13 @@ public class WorkspaceController {
 
     @GetMapping("/{workspaceId}")
     public ResponseEntity<WorkspaceModel> findUserWorkspaceById(@PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId){
-        if(!authorizationResource.itIsUserWorkspace(id, workspaceId))
-            throw new ActionNotAllowedException();
         return ResponseEntity.status(HttpStatus.OK).body(workspaceResource.findById(workspaceId));
     }
 
     @PutMapping("/{workspaceId}")
     public ResponseEntity<WorkspaceModel> updateUserWorkspaceById(@PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId, @RequestBody @Valid NewWorkspaceDto workspaceDto){
+        if(!workspaceResource.workspaceExists(workspaceId))
+            throw new ResourceNotFoundException("Workspace Not Found");
         if(!authorizationResource.itIsUserWorkspace(id, workspaceId))
             throw new ActionNotAllowedException();
         return ResponseEntity.status(HttpStatus.CREATED).body(workspaceResource.update(workspaceDto, workspaceId));
@@ -51,6 +52,8 @@ public class WorkspaceController {
 
     @DeleteMapping("/{workspaceId}")
     public ResponseEntity<ClientResponseDto> deleteUserWorkspaceById(@PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId){
+        if(!workspaceResource.workspaceExists(workspaceId))
+            throw new ResourceNotFoundException("Workspace Not Found");
         if(!authorizationResource.itIsUserWorkspace(id, workspaceId))
             throw new ActionNotAllowedException();
         workspaceResource.deleteById(workspaceId, id);

@@ -26,6 +26,8 @@ public class AddressController {
 
     @PutMapping("/{addressId}")
     public ResponseEntity<AddressModel> updateUserAddress(@PathVariable(name = "id") int id, @PathVariable(name = "addressId") int addressId, @RequestBody @Valid AddressDto addressDto){
+        if(!addressResource.addressExists(addressId))
+            throw new ResourceNotFoundException("Address Not Found");
         if(!authorizationResource.itIsUserAddress(id, addressId))
             throw new ActionNotAllowedException();
         return ResponseEntity.status(HttpStatus.CREATED).body(addressResource.update(addressDto, addressId));

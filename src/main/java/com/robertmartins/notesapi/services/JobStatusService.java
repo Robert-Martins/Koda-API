@@ -52,6 +52,10 @@ public class JobStatusService implements JobStatusResource {
                 .orElseThrow(() -> new ResourceNotFoundException("Status Not Found"));
     }
 
+    public boolean jobStatusExists(int id){
+        return jobStatusRepository.existsById(id);
+    }
+
     public List<JobStatusModel> createGenericStatus(){
         List<JobStatusModel> jobStatusList = new ArrayList<>();
         jobStatusList.add(new JobStatusModel("To-Do", "Jobs to be done", "#ff1c37", new Date(), new Date()));
