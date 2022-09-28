@@ -16,6 +16,6 @@ public interface WorkspaceResource {
 
     WorkspaceModel findById(int id);
 
-    void deleteById(int id);
+    void deleteById(int workspaceId, int id);
 
 }

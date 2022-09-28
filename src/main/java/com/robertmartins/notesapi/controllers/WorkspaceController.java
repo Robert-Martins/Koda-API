@@ -53,7 +53,7 @@ public class WorkspaceController {
     public ResponseEntity<ClientResponseDto> deleteUserWorkspaceById(@PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId){
         if(!authorizationResource.itIsUserWorkspace(id, workspaceId))
             throw new ActionNotAllowedException();
-        workspaceResource.deleteById(workspaceId);
+        workspaceResource.deleteById(workspaceId, id);
         return ResponseEntity.status(HttpStatus.OK).body(
                 ClientResponseDto.builder()
                         .message("User Deleted")

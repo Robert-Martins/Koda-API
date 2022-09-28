@@ -1,6 +1,5 @@
 package com.robertmartins.notesapi.services;
 
-import com.robertmartins.notesapi.controllers.JobStatusController;
 import com.robertmartins.notesapi.dtos.NewWorkspaceDto;
 import com.robertmartins.notesapi.exceptions.ResourceNotFoundException;
 import com.robertmartins.notesapi.models.WorkspaceModel;
@@ -10,11 +9,9 @@ import com.robertmartins.notesapi.resources.UserResource;
 import com.robertmartins.notesapi.resources.WorkspaceResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Component
 public class WorkspaceService implements WorkspaceResource {
@@ -46,8 +43,10 @@ public class WorkspaceService implements WorkspaceResource {
         return workspaceRepository.save(workspace);
     }
 
-    public void deleteById(int id){
-        workspaceRepository.deleteById(id);
+    public void deleteById(int workspaceId, int id){
+        var user = userResource.findById(id);
+        user.getWorkspaces().remove(this.findById(workspaceId));
+        userResource.saveUser(user);
     }
 
     public WorkspaceModel findById(int id){
