@@ -15,8 +15,6 @@ public interface JobStatusResource {
 
     JobStatusModel update(JobStatusDto jobStatusDto, int id);
 
-    void deleteById(int jobId, int id);
-
     JobStatusModel findById(int id);
 
     List<JobStatusModel> createGenericStatus();

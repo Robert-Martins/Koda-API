@@ -32,7 +32,7 @@ public class WorkspaceService implements WorkspaceResource {
         workspaceModelList.add(workspace);
         user.setWorkspaces(workspaceModelList);
         userResource.saveUser(user);
-        return workspace;
+        return workspaceModelList.get(workspaceModelList.size() - 1);
     }
 
     public WorkspaceModel update(NewWorkspaceDto workspaceDto, int workspaceId){
@@ -52,6 +52,12 @@ public class WorkspaceService implements WorkspaceResource {
     public WorkspaceModel findById(int id){
         return workspaceRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Workspace Not Found"));
+    }
+
+    public void deleteStatusById(int workspaceId, int id){
+        var workspace = this.findById(workspaceId);
+        workspace.getJobStatus().remove(jobStatusResource.findById(id));
+        workspaceRepository.save(workspace);
     }
 
     public WorkspaceModel setWorkspace(NewWorkspaceDto newWorkspaceDto){

@@ -26,9 +26,6 @@ public class JobStatusService implements JobStatusResource {
     @Autowired
     private WorkspaceRepository workspaceRepository;
 
-    @Autowired
-    private WorkspaceResource workspaceResource;
-
     public JobStatusModel save(JobStatusDto jobStatusDto, int id){
         var workspace = workspaceRepository.findById(id);
         var jobStatusList = workspace.get().getJobStatus();
@@ -53,12 +50,6 @@ public class JobStatusService implements JobStatusResource {
     public JobStatusModel findById(int id){
         return jobStatusRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Status Not Found"));
-    }
-
-    public void deleteById(int jobId, int id){
-        var workspace = workspaceResource.findById(id);
-        workspace.getJobStatus().remove(this.findById(jobId));
-        workspaceRepository.save(workspace);
     }
 
     public List<JobStatusModel> createGenericStatus(){

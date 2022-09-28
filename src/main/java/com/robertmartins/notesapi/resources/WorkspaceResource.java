@@ -2,10 +2,7 @@ package com.robertmartins.notesapi.resources;
 
 import com.robertmartins.notesapi.dtos.NewWorkspaceDto;
 import com.robertmartins.notesapi.models.WorkspaceModel;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public interface WorkspaceResource {
@@ -17,5 +14,7 @@ public interface WorkspaceResource {
     WorkspaceModel findById(int id);
 
     void deleteById(int workspaceId, int id);
+
+    void deleteStatusById(int workspaceId, int id);
 
 }

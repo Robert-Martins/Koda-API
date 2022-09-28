@@ -55,7 +55,7 @@ public class JobStatusController {
             throw new ActionNotAllowedException();
         if(!authorizationResource.itIsWorkspaceStatus(workspaceId, statusId))
             throw new ActionNotAllowedException();
-        jobStatusResource.deleteById(statusId, workspaceId);
+        workspaceResource.deleteStatusById(workspaceId, statusId);
         return ResponseEntity.status(HttpStatus.OK).body(
                 ClientResponseDto.builder()
                         .message("User Deleted")
