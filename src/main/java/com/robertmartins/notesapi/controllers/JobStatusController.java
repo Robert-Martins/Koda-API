@@ -63,7 +63,7 @@ public class JobStatusController {
         workspaceResource.deleteStatusById(workspaceId, statusId);
         return ResponseEntity.status(HttpStatus.OK).body(
                 ClientResponseDto.builder()
-                        .message("User Deleted")
+                        .message("Status Deleted")
                         .timestamp(LocalDateTime.now())
                         .build()
         );

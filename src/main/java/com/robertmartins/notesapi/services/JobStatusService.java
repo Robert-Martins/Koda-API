@@ -6,16 +6,13 @@ import com.robertmartins.notesapi.models.JobStatusModel;
 import com.robertmartins.notesapi.repositories.JobStatusRepository;
 import com.robertmartins.notesapi.repositories.WorkspaceRepository;
 import com.robertmartins.notesapi.resources.JobStatusResource;
-import com.robertmartins.notesapi.resources.WorkspaceResource;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Component
 public class JobStatusService implements JobStatusResource {
@@ -36,7 +33,7 @@ public class JobStatusService implements JobStatusResource {
         jobStatusList.add(jobStatus);
         workspace.get().setJobStatus(jobStatusList);
         workspaceRepository.save(workspace.get());
-        return jobStatus;
+        return jobStatusList.get(jobStatusList.size() - 1);
     }
 
     public JobStatusModel update(JobStatusDto jobStatusDto, int id){
