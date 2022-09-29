@@ -59,7 +59,7 @@ public class WorkspaceController {
         workspaceResource.deleteById(workspaceId, id);
         return ResponseEntity.status(HttpStatus.OK).body(
                 ClientResponseDto.builder()
-                        .message("User Deleted")
+                        .message("Workspace Deleted")
                         .timestamp(LocalDateTime.now())
                         .build()
         );

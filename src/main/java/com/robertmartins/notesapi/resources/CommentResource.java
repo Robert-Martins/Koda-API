@@ -14,11 +14,11 @@ public interface CommentResource {
 
     CommentModel update(CommentDto commentDto, int commentId);
 
-    void delete(int id);
-
     CommentModel findById(int id);
 
     CommentReadDto getById(int id);
+
+    void deleteById(int id);
 
     List<CommentReadDto> getAllCommentsInAJob(int jobId);
 

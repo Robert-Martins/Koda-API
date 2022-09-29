@@ -1,8 +1,5 @@
 package com.robertmartins.notesapi.services;
 
-import com.robertmartins.notesapi.exceptions.ResourceNotFoundException;
-import com.robertmartins.notesapi.models.JobStatusModel;
-import com.robertmartins.notesapi.models.WorkspaceModel;
 import com.robertmartins.notesapi.resources.AuthorizationResource;
 import com.robertmartins.notesapi.resources.JobResource;
 import com.robertmartins.notesapi.resources.UserResource;

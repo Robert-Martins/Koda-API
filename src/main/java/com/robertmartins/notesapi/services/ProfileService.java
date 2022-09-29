@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.Optional;
 
@@ -30,6 +31,7 @@ public class ProfileService implements ProfileResource {
     @Autowired
     private AddressResource addressResource;
 
+    @Transactional
     public ProfileModel update(UserProfileDto profileDto, int id){
         Optional<UserModel> user = userRepository.findById(id);
         var profile = user.get().getProfile();

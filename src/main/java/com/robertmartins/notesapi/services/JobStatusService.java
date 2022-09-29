@@ -10,6 +10,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -36,6 +37,7 @@ public class JobStatusService implements JobStatusResource {
         return jobStatusList.get(jobStatusList.size() - 1);
     }
 
+    @Transactional
     public JobStatusModel update(JobStatusDto jobStatusDto, int id){
         var jobStatus = this.findById(id);
         BeanUtils.copyProperties(jobStatusDto, jobStatus);

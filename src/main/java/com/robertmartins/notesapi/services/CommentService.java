@@ -12,6 +12,7 @@ import com.robertmartins.notesapi.resources.UserResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -33,15 +34,12 @@ public class CommentService implements CommentResource{
         return commentRepository.save(comment);
     }
 
+    @Transactional
     public CommentModel update(CommentDto commentDto, int commentId){
         var comment = this.findById(commentId);
         comment.setComment(commentDto.getComment());
         comment.setUpdatedAt(new Date());
         return commentRepository.save(comment);
-    }
-
-    public void delete(int id){
-        commentRepository.deleteById(id);
     }
 
     public CommentModel findById(int id){
@@ -53,6 +51,11 @@ public class CommentService implements CommentResource{
         var comment = commentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Comment Not Found"));
         return this.normalizeComment(comment);
+    }
+
+    @Transactional
+    public void deleteById(int id){
+        commentRepository.deleteCommentById(id);
     }
 
     public List<CommentReadDto> getAllCommentsInAJob(int id){

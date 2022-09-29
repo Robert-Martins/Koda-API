@@ -9,6 +9,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
 import java.util.Date;
 
 @Component
@@ -17,6 +18,7 @@ public class AddressService implements AddressResource {
     @Autowired
     private AddressRepository addressRepository;
 
+    @Transactional
     public AddressModel update(AddressDto addressDto, int id){
         var address = this.findById(id);
         BeanUtils.copyProperties(addressDto, address);

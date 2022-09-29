@@ -68,7 +68,7 @@ public class CommentController {
             throw new ActionNotAllowedException();
         if(!authorizationResource.itIsJobComment(jobId, commentId))
             throw new ActionNotAllowedException();
-        commentResource.delete(commentId);
+        commentResource.deleteById(commentId);
         return ResponseEntity.status(HttpStatus.OK).body(
                 ClientResponseDto.builder()
                         .message("Comment Deleted")

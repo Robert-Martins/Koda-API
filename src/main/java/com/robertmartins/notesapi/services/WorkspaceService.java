@@ -2,7 +2,11 @@ package com.robertmartins.notesapi.services;
 
 import com.robertmartins.notesapi.dtos.NewWorkspaceDto;
 import com.robertmartins.notesapi.exceptions.ResourceNotFoundException;
+import com.robertmartins.notesapi.models.JobModel;
 import com.robertmartins.notesapi.models.WorkspaceModel;
+import com.robertmartins.notesapi.repositories.CommentRepository;
+import com.robertmartins.notesapi.repositories.JobRepository;
+import com.robertmartins.notesapi.repositories.JobStatusRepository;
 import com.robertmartins.notesapi.repositories.WorkspaceRepository;
 import com.robertmartins.notesapi.resources.JobResource;
 import com.robertmartins.notesapi.resources.JobStatusResource;
@@ -11,8 +15,10 @@ import com.robertmartins.notesapi.resources.WorkspaceResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class WorkspaceService implements WorkspaceResource {
@@ -21,10 +27,16 @@ public class WorkspaceService implements WorkspaceResource {
     private WorkspaceRepository workspaceRepository;
 
     @Autowired
-    private UserResource userResource;
+    private CommentRepository commentRepository;
 
     @Autowired
-    private JobResource jobResource;
+    private JobRepository jobRepository;
+
+    @Autowired
+    private JobStatusRepository jobStatusRepository;
+
+    @Autowired
+    private UserResource userResource;
 
     @Autowired
     private JobStatusResource jobStatusResource;
@@ -39,6 +51,7 @@ public class WorkspaceService implements WorkspaceResource {
         return workspaceModelList.get(workspaceModelList.size() - 1);
     }
 
+    @Transactional
     public WorkspaceModel update(NewWorkspaceDto workspaceDto, int workspaceId){
         var workspace = this.findById(workspaceId);
         workspace.setName(workspaceDto.getName());
@@ -47,10 +60,14 @@ public class WorkspaceService implements WorkspaceResource {
         return workspaceRepository.save(workspace);
     }
 
+    @Transactional
     public void deleteById(int workspaceId, int id){
-        var user = userResource.findById(id);
-        user.getWorkspaces().remove(this.findById(workspaceId));
-        userResource.saveUser(user);
+        var workspace = this.findById(workspaceId);
+        var status = workspace.getJobStatus();
+        if(!(status == null || status.size() == 0))
+            for(var s : status)
+                this.deleteStatusById(workspaceId, s.getId());
+        workspaceRepository.deleteWorkspaceById(workspaceId);
     }
 
     public WorkspaceModel findById(int id){
@@ -58,16 +75,26 @@ public class WorkspaceService implements WorkspaceResource {
                 .orElseThrow(() -> new ResourceNotFoundException("Workspace Not Found"));
     }
 
+    @Transactional
     public void deleteJobById(int workspaceId, int id){
-        var workspace = this.findById(workspaceId);
-        workspace.getJobs().remove(jobResource.findById(id));
-        workspaceRepository.save(workspace);
+        var job = jobRepository.findById(id).orElseThrow();
+        var comments = job.getComments();
+        if(!( comments == null || comments.size() == 0))
+            for(var comment : comments)
+                commentRepository.deleteCommentById(comment.getId());
+        jobRepository.deleteJobById(id);
     }
 
+    @Transactional
     public void deleteStatusById(int workspaceId, int id){
         var workspace = this.findById(workspaceId);
-        workspace.getJobStatus().remove(jobStatusResource.findById(id));
-        workspaceRepository.save(workspace);
+        var jobStatus = jobStatusResource.findById(id);
+        var jobs = workspace.getJobs().stream()
+                        .filter(job -> job.getJobStatus().getId() == jobStatus.getId())
+                        .collect(Collectors.toList());
+        jobs.stream()
+                .forEach(jobModel -> this.deleteJobById(workspaceId, jobModel.getId()));
+        jobStatusRepository.deleteStatusById(id);
     }
 
     public boolean workspaceExists(int id){

@@ -12,6 +12,7 @@ import com.robertmartins.notesapi.resources.UserResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
 import java.util.Date;
 
 @Component
@@ -49,6 +50,7 @@ public class UserService implements UserResource {
         return userRepository.save(user);
     }
 
+    @Transactional
     public UserModel updateCredentials(UserCredentialsDto userCredentialsDto, int id){
         if(userRepository.existsByLogin(userCredentialsDto.getLogin()))
             throw new DuplicateKeyException("Conflict: Login already in use");
@@ -64,6 +66,7 @@ public class UserService implements UserResource {
                 .orElseThrow(() -> new ResourceNotFoundException("User Not Found"));
     }
 
+    @Transactional
     public void deleteById(int id){
         userRepository.deleteById(id);
     }
