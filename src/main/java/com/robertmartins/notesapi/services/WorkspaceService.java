@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -91,6 +92,7 @@ public class WorkspaceService implements WorkspaceResource {
             jobStatus.setName(status.getName());
             jobStatus.setDescription(status.getDescription());
             List<JobReadDto> jobReadList = new ArrayList<>();
+            jobStatus.setPosition(status.getPosition());
             var jobs = workspace.getJobs().stream()
                     .filter(j -> j.getJobStatus().getId() == status.getId())
                     .collect(Collectors.toList());
@@ -109,8 +111,11 @@ public class WorkspaceService implements WorkspaceResource {
             jobStatus.setUpdatedAt(status.getUpdatedAt());
             jobStatus.setCreatedAt(status.getCreatedAt());
             jobStatusReadList.add(jobStatus);
-            workspaceRead.setStatus(jobStatusReadList);
         });
+        var sortedList = jobStatusReadList.stream()
+                .sorted(Comparator.comparing(JobStatusReadDto::getPosition))
+                .collect(Collectors.toList());
+        workspaceRead.setStatus(sortedList);
         return workspaceRead;
     }
 

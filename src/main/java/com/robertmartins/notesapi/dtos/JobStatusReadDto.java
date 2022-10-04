@@ -20,6 +20,8 @@ public class JobStatusReadDto {
 
     private List<JobReadDto> jobs;
 
+    private int position;
+
     private Date updatedAt;
 
     private Date createdAt;
