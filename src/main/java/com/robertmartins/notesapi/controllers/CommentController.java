@@ -1,12 +1,8 @@
 package com.robertmartins.notesapi.controllers;
 
-import com.robertmartins.notesapi.dtos.ClientResponseDto;
-import com.robertmartins.notesapi.dtos.CommentDto;
-import com.robertmartins.notesapi.dtos.CommentReadDto;
-import com.robertmartins.notesapi.dtos.PaginatedResponseDto;
+import com.robertmartins.notesapi.dtos.*;
 import com.robertmartins.notesapi.exceptions.ActionNotAllowedException;
 import com.robertmartins.notesapi.exceptions.ResourceNotFoundException;
-import com.robertmartins.notesapi.models.CommentModel;
 import com.robertmartins.notesapi.resources.AuthorizationResource;
 import com.robertmartins.notesapi.resources.CommentResource;
 import com.robertmartins.notesapi.resources.JobResource;
@@ -19,6 +15,7 @@ import javax.validation.Valid;
 import java.time.LocalDateTime;
 
 @RestController
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("/user/{id}/workspace/{workspaceId}/jobs/{jobId}/comments")
 public class CommentController {
 
@@ -32,12 +29,21 @@ public class CommentController {
     private AuthorizationResource authorizationResource;
 
     @PostMapping
-    public ResponseEntity<CommentModel> save(@PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId ,@PathVariable(name = "jobId") int jobId, @RequestBody @Valid CommentDto commentDto){
+    public ResponseEntity<ClientResponseDto> save(@PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId , @PathVariable(name = "jobId") int jobId, @RequestBody @Valid CommentDto commentDto){
         if(!authorizationResource.itIsUserWorkspace(id, workspaceId))
             throw new ActionNotAllowedException();
         if(!authorizationResource.itIsWorkspaceJob(workspaceId, jobId))
             throw new ActionNotAllowedException();
-        return ResponseEntity.status(HttpStatus.CREATED).body(commentResource.save(commentDto, id, jobId));
+        var comment = commentResource.save(commentDto, id, jobId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                ClientResponseDto.builder()
+                        .id(comment.getId())
+                        .operationType("CREATE")
+                        .status(HttpStatus.OK.value())
+                        .message("Comment Registered Successfully")
+                        .timestamp(LocalDateTime.now())
+                        .build()
+        );
     }
 
     @GetMapping("/{commentId}")
@@ -46,7 +52,7 @@ public class CommentController {
     }
 
     @PutMapping("/{commentId}")
-    public ResponseEntity<CommentModel> updateById(@PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId , @PathVariable(name = "jobId") int jobId, @PathVariable(name = "commentId") int commentId, @RequestBody @Valid CommentDto commentDto){
+    public ResponseEntity<ClientResponseDto> updateById(@PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId , @PathVariable(name = "jobId") int jobId, @PathVariable(name = "commentId") int commentId, @RequestBody @Valid CommentDto commentDto){
         if(!commentResource.commentExists(commentId))
             throw new ResourceNotFoundException("Comment Not Found");
         if(!authorizationResource.itIsUserWorkspace(id, workspaceId))
@@ -55,7 +61,16 @@ public class CommentController {
             throw new ActionNotAllowedException();
         if(!authorizationResource.itIsJobComment(jobId, commentId))
             throw new ActionNotAllowedException();
-        return ResponseEntity.status(HttpStatus.OK).body(commentResource.update(commentDto, commentId));
+        var comment = commentResource.update(commentDto, commentId);
+        return ResponseEntity.status(HttpStatus.OK).body(
+                ClientResponseDto.builder()
+                        .id(commentId)
+                        .operationType("UPDATE")
+                        .status(HttpStatus.OK.value())
+                        .message("Comment Updated Successfully")
+                        .timestamp(LocalDateTime.now())
+                        .build()
+        );
     }
 
     @DeleteMapping("/{commentId}")
@@ -71,6 +86,8 @@ public class CommentController {
         commentResource.deleteById(commentId);
         return ResponseEntity.status(HttpStatus.OK).body(
                 ClientResponseDto.builder()
+                        .operationType("DELETE")
+                        .status(HttpStatus.OK.value())
                         .message("Comment Deleted")
                         .timestamp(LocalDateTime.now())
                         .build()

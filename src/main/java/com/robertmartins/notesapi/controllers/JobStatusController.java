@@ -17,6 +17,7 @@ import javax.validation.Valid;
 import java.time.LocalDateTime;
 
 @RestController
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("/user/{id}/workspace/{workspaceId}/status")
 public class JobStatusController {
 
@@ -30,10 +31,19 @@ public class JobStatusController {
     private AuthorizationResource authorizationResource;
 
     @PostMapping
-    public ResponseEntity<JobStatusModel> save(@PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId, @RequestBody @Valid JobStatusDto jobStatusDto){
+    public ResponseEntity<ClientResponseDto> save(@PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId, @RequestBody @Valid JobStatusDto jobStatusDto){
         if(!authorizationResource.itIsUserWorkspace(id, workspaceId))
             throw new ActionNotAllowedException();
-        return ResponseEntity.status(HttpStatus.CREATED).body(jobStatusResource.save(jobStatusDto, workspaceId));
+        var jobStatus = jobStatusResource.save(jobStatusDto, workspaceId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                ClientResponseDto.builder()
+                        .id(jobStatus.getId())
+                        .operationType("CREATE")
+                        .status(HttpStatus.CREATED.value())
+                        .message("Status Registered Successfully")
+                        .timestamp(LocalDateTime.now())
+                        .build()
+        );
     }
 
     @GetMapping("/{statusId}")
@@ -42,25 +52,43 @@ public class JobStatusController {
     }
 
     @PutMapping("/{statusId}")
-    public ResponseEntity<JobStatusModel> updateStatusById(@PathVariable(name = "id")int id, @PathVariable(name = "workspaceId") int workspaceId, @PathVariable(name = "statusId") int statusId, @RequestBody @Valid JobStatusDto jobStatusDto){
+    public ResponseEntity<ClientResponseDto> updateStatusById(@PathVariable(name = "id")int id, @PathVariable(name = "workspaceId") int workspaceId, @PathVariable(name = "statusId") int statusId, @RequestBody @Valid JobStatusDto jobStatusDto){
         if(!jobStatusResource.jobStatusExists(statusId))
             throw new ResourceNotFoundException("Status Not Found");
         if(!authorizationResource.itIsUserWorkspace(id, workspaceId))
             throw new ActionNotAllowedException();
         if(!authorizationResource.itIsWorkspaceStatus(workspaceId, statusId))
             throw new ActionNotAllowedException();
-        return ResponseEntity.status(HttpStatus.CREATED).body(jobStatusResource.update(jobStatusDto, statusId));
+        var jobStatus = jobStatusResource.update(jobStatusDto, statusId);
+        return ResponseEntity.status(HttpStatus.OK).body(
+                ClientResponseDto.builder()
+                        .id(jobStatus.getId())
+                        .operationType("UPDATE")
+                        .status(HttpStatus.OK.value())
+                        .message("Status Updated Successfully")
+                        .timestamp(LocalDateTime.now())
+                        .build()
+        );
     }
 
     @PutMapping("/{statusId}/position")
-    public ResponseEntity<JobStatusModel> updateStatusPositionById(@PathVariable(name = "id")int id, @PathVariable(name = "workspaceId") int workspaceId, @PathVariable(name = "statusId") int statusId, @RequestParam String position){
+    public ResponseEntity<ClientResponseDto> updateStatusPositionById(@PathVariable(name = "id")int id, @PathVariable(name = "workspaceId") int workspaceId, @PathVariable(name = "statusId") int statusId, @RequestParam String position){
         if(!jobStatusResource.jobStatusExists(statusId))
             throw new ResourceNotFoundException("Status Not Found");
         if(!authorizationResource.itIsUserWorkspace(id, workspaceId))
             throw new ActionNotAllowedException();
         if(!authorizationResource.itIsWorkspaceStatus(workspaceId, statusId))
             throw new ActionNotAllowedException();
-        return ResponseEntity.status(HttpStatus.CREATED).body(jobStatusResource.changePosition(statusId, workspaceId, Integer.parseInt(position)));
+        var jobStatus = jobStatusResource.changePosition(statusId, workspaceId, Integer.parseInt(position));
+        return ResponseEntity.status(HttpStatus.OK).body(
+                ClientResponseDto.builder()
+                        .id(jobStatus.getId())
+                        .operationType("UPDATE")
+                        .status(HttpStatus.OK.value())
+                        .message("Status Updated Successfully")
+                        .timestamp(LocalDateTime.now())
+                        .build()
+        );
     }
 
     @DeleteMapping("/{statusId}")
@@ -74,6 +102,8 @@ public class JobStatusController {
         workspaceResource.deleteStatusById(workspaceId, statusId);
         return ResponseEntity.status(HttpStatus.OK).body(
                 ClientResponseDto.builder()
+                        .operationType("DELETE")
+                        .status(HttpStatus.OK.value())
                         .message("Status Deleted")
                         .timestamp(LocalDateTime.now())
                         .build()

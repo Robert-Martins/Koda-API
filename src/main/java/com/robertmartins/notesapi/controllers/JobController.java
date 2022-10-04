@@ -17,6 +17,7 @@ import javax.validation.Valid;
 import java.time.LocalDateTime;
 
 @RestController
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("/user/{id}/workspace/{workspaceId}/jobs")
 public class JobController {
 
@@ -30,10 +31,19 @@ public class JobController {
     private AuthorizationResource authorizationResource;
 
     @PostMapping
-    public ResponseEntity<JobModel> save(@PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId, @RequestBody @Valid JobDto jobDto){
+    public ResponseEntity<ClientResponseDto> save(@PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId, @RequestBody @Valid JobDto jobDto){
         if(!authorizationResource.itIsUserWorkspace(id, workspaceId))
             throw new ActionNotAllowedException();
-        return ResponseEntity.status(HttpStatus.CREATED).body(jobResource.save(jobDto, id, workspaceId));
+        var job = jobResource.save(jobDto, id, workspaceId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                ClientResponseDto.builder()
+                        .id(job.getId())
+                        .operationType("CREATE")
+                        .status(HttpStatus.CREATED.value())
+                        .message("Job Registered Successfully")
+                        .timestamp(LocalDateTime.now())
+                        .build()
+        );
     }
 
     @GetMapping("/{jobId}")
@@ -42,14 +52,22 @@ public class JobController {
     }
 
     @PutMapping("/{jobId}")
-    public ResponseEntity<JobModel> updateJobById(@PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId, @PathVariable(name = "jobId") int jobId, @RequestBody @Valid JobDto jobDto){
+    public ResponseEntity<ClientResponseDto> updateJobById(@PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId, @PathVariable(name = "jobId") int jobId, @RequestBody @Valid JobDto jobDto){
         if(!jobResource.jobExists(jobId))
             throw new ResourceNotFoundException("Job Not Found");
         if(!authorizationResource.itIsUserWorkspace(id, workspaceId))
             throw new ActionNotAllowedException();
         if(!authorizationResource.itIsWorkspaceJob(workspaceId, jobId))
             throw new ActionNotAllowedException();
-        return ResponseEntity.status(HttpStatus.CREATED).body(jobResource.update(jobDto, jobId));
+        var job = jobResource.update(jobDto, jobId);
+        return ResponseEntity.status(HttpStatus.OK).body(ClientResponseDto.builder()
+                .id(job.getId())
+                .operationType("CREATE")
+                .status(HttpStatus.OK.value())
+                .message("Job Updated Successfully")
+                .timestamp(LocalDateTime.now())
+                .build()
+        );
     }
 
     @DeleteMapping("/{jobId}")
@@ -61,11 +79,12 @@ public class JobController {
         if(!authorizationResource.itIsWorkspaceJob(workspaceId, jobId))
             throw new ActionNotAllowedException();
         workspaceResource.deleteJobById(workspaceId, jobId);
-        return ResponseEntity.status(HttpStatus.OK).body(
-                ClientResponseDto.builder()
-                        .message("Job Deleted")
-                        .timestamp(LocalDateTime.now())
-                        .build()
+        return ResponseEntity.status(HttpStatus.OK).body(ClientResponseDto.builder()
+                .operationType("DELETE")
+                .status(HttpStatus.OK.value())
+                .message("Job Deleted")
+                .timestamp(LocalDateTime.now())
+                .build()
         );
     }
 

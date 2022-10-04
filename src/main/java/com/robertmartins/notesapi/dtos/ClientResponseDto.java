@@ -9,6 +9,12 @@ import java.time.LocalDateTime;
 @Builder
 public class ClientResponseDto {
 
+    private int id;
+
+    private String operationType;
+
+    private int status;
+
     private String message;
 
     private LocalDateTime timestamp;

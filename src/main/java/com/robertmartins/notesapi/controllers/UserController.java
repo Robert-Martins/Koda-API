@@ -21,8 +21,17 @@ public class UserController {
     private UserResource userResource;
 
     @PostMapping
-    public ResponseEntity<UserModel> save(@RequestBody @Valid UserDto userDto){
-        return ResponseEntity.status(HttpStatus.CREATED).body(userResource.save(userDto));
+    public ResponseEntity<ClientResponseDto> save(@RequestBody @Valid UserDto userDto){
+        var user = userResource.save(userDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                ClientResponseDto.builder()
+                        .id(user.getId())
+                        .operationType("CREATE")
+                        .status(HttpStatus.CREATED.value())
+                        .message("User Registered Successfully")
+                        .timestamp(LocalDateTime.now())
+                        .build()
+        );
     }
 
     @GetMapping("/{id}")
@@ -31,8 +40,17 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserModel> updateUserCredentialsById(@PathVariable(name = "id") int id, @RequestBody @Valid UserCredentialsDto userCredentials){
-        return ResponseEntity.status(HttpStatus.CREATED).body(userResource.updateCredentials(userCredentials, id));
+    public ResponseEntity<ClientResponseDto> updateUserCredentialsById(@PathVariable(name = "id") int id, @RequestBody @Valid UserCredentialsDto userCredentials){
+        var user = userResource.updateCredentials(userCredentials, id);
+        return ResponseEntity.status(HttpStatus.OK).body(
+                ClientResponseDto.builder()
+                        .id(user.getId())
+                        .operationType("UPDATE")
+                        .status(HttpStatus.OK.value())
+                        .message("User Updated Successfully")
+                        .timestamp(LocalDateTime.now())
+                        .build()
+        );
     }
 
     @DeleteMapping("/{id}")
@@ -40,6 +58,8 @@ public class UserController {
         userResource.deleteById(id);
         return ResponseEntity.status(HttpStatus.OK).body(
                 ClientResponseDto.builder()
+                        .operationType("DELETE")
+                        .status(HttpStatus.OK.value())
                         .message("User Deleted")
                         .timestamp(LocalDateTime.now())
                         .build()
