@@ -25,11 +25,14 @@ public class JobStatusModel {
     @Column(name = "name", nullable = false, length = 50)
     private String name;
 
-    @Column(name = "description", length = 255)
+    @Column(name = "description")
     private String description;
 
     @Column(name = "color", nullable = false)
     private String color;
+
+    @Column(name = "position", nullable = false)
+    private int position;
 
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
@@ -41,10 +44,11 @@ public class JobStatusModel {
     @Column(nullable = false, updatable = false)
     private Date createdAt;
 
-    public JobStatusModel(String name, String description, String color, Date updatedAt, Date createdAt){
+    public JobStatusModel(String name, String description, String color, int position, Date updatedAt, Date createdAt){
         this.setName(name);
         this.setDescription(description);
         this.setColor(color);
+        this.setPosition(position);
         this.setUpdatedAt(updatedAt);
         this.setCreatedAt(createdAt);
     }

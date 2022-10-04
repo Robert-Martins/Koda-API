@@ -15,6 +15,8 @@ public interface JobStatusResource {
 
     JobStatusModel findById(int id);
 
+    JobStatusModel changePosition(int id, int workspaceId, int position);
+
     List<JobStatusModel> createGenericStatus();
 
     boolean jobStatusExists(int id);

@@ -52,6 +52,17 @@ public class JobStatusController {
         return ResponseEntity.status(HttpStatus.CREATED).body(jobStatusResource.update(jobStatusDto, statusId));
     }
 
+    @PutMapping("/{statusId}/position")
+    public ResponseEntity<JobStatusModel> updateStatusPositionById(@PathVariable(name = "id")int id, @PathVariable(name = "workspaceId") int workspaceId, @PathVariable(name = "statusId") int statusId, @RequestParam String position){
+        if(!jobStatusResource.jobStatusExists(statusId))
+            throw new ResourceNotFoundException("Status Not Found");
+        if(!authorizationResource.itIsUserWorkspace(id, workspaceId))
+            throw new ActionNotAllowedException();
+        if(!authorizationResource.itIsWorkspaceStatus(workspaceId, statusId))
+            throw new ActionNotAllowedException();
+        return ResponseEntity.status(HttpStatus.CREATED).body(jobStatusResource.changePosition(statusId, workspaceId, Integer.parseInt(position)));
+    }
+
     @DeleteMapping("/{statusId}")
     public ResponseEntity<ClientResponseDto> deleteStatusById(@PathVariable(name = "id")int id, @PathVariable(name = "workspaceId") int workspaceId, @PathVariable(name = "statusId") int statusId){
         if(!jobStatusResource.jobStatusExists(statusId))
