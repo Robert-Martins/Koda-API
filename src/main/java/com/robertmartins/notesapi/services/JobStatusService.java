@@ -55,6 +55,7 @@ public class JobStatusService implements JobStatusResource {
                 .orElseThrow(() -> new ResourceNotFoundException("Status Not Found"));
     }
 
+    @Transactional
     public JobStatusModel changePosition(int id, int workspaceId, int position){
         var workspace = workspaceRepository.findById(workspaceId)
                 .orElseThrow(() -> new ResourceNotFoundException("Workspace Not Found"));
@@ -66,14 +67,29 @@ public class JobStatusService implements JobStatusResource {
         var statusPosition = jobStatus.getPosition();
         sortedList.remove(statusPosition - 1);
         sortedList.add(position - 1, jobStatus);
-        jobStatusList.stream()
-                .forEach(status -> {
+        jobStatusList.forEach(status -> {
                     var p = sortedList.indexOf(status);
                     status.setPosition(p + 1);
                     status.setUpdatedAt(new Date());
                     jobStatusRepository.save(status);
                 });
         return this.findById(id);
+    }
+
+    @Transactional
+    public void organizePositions(int workspaceId){
+        var workspace = workspaceRepository.findById(workspaceId)
+                .orElseThrow(() -> new ResourceNotFoundException("Workspace Not Found"));
+        var jobStatusList = workspace.getJobStatus();
+        var sortedList = jobStatusList.stream()
+                .sorted(Comparator.comparing(JobStatusModel::getPosition))
+                .collect(Collectors.toList());
+        jobStatusList.forEach(status -> {
+                    var p = sortedList.indexOf(status);
+                    status.setPosition(p + 1);
+                    status.setUpdatedAt(new Date());
+                    jobStatusRepository.save(status);
+                });
     }
 
     public boolean jobStatusExists(int id){

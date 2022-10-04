@@ -2,13 +2,11 @@ package com.robertmartins.notesapi.services;
 
 import com.robertmartins.notesapi.dtos.NewWorkspaceDto;
 import com.robertmartins.notesapi.exceptions.ResourceNotFoundException;
-import com.robertmartins.notesapi.models.JobModel;
 import com.robertmartins.notesapi.models.WorkspaceModel;
 import com.robertmartins.notesapi.repositories.CommentRepository;
 import com.robertmartins.notesapi.repositories.JobRepository;
 import com.robertmartins.notesapi.repositories.JobStatusRepository;
 import com.robertmartins.notesapi.repositories.WorkspaceRepository;
-import com.robertmartins.notesapi.resources.JobResource;
 import com.robertmartins.notesapi.resources.JobStatusResource;
 import com.robertmartins.notesapi.resources.UserResource;
 import com.robertmartins.notesapi.resources.WorkspaceResource;
@@ -71,6 +69,7 @@ public class WorkspaceService implements WorkspaceResource {
     }
 
     public WorkspaceModel findById(int id){
+        jobStatusResource.organizePositions(id);
         return workspaceRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Workspace Not Found"));
     }
@@ -92,8 +91,7 @@ public class WorkspaceService implements WorkspaceResource {
         var jobs = workspace.getJobs().stream()
                         .filter(job -> job.getJobStatus().getId() == jobStatus.getId())
                         .collect(Collectors.toList());
-        jobs.stream()
-                .forEach(jobModel -> this.deleteJobById(workspaceId, jobModel.getId()));
+        jobs.forEach(jobModel -> this.deleteJobById(workspaceId, jobModel.getId()));
         jobStatusRepository.deleteStatusById(id);
     }
 
