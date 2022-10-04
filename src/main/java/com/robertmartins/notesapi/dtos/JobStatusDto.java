@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
 @Getter
@@ -12,14 +12,14 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 public class JobStatusDto {
 
-    @NotNull
+    @NotEmpty
     @Size(max = 50)
     private String name;
 
     @Size(max = 255)
     private String description;
 
-    @NotNull
+    @NotEmpty
     private String color;
 
 }
