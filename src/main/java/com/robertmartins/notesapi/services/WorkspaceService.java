@@ -1,7 +1,6 @@
 package com.robertmartins.notesapi.services;
 
-import com.robertmartins.notesapi.dtos.NewWorkspaceDto;
-import com.robertmartins.notesapi.dtos.WorkspaceListDto;
+import com.robertmartins.notesapi.dtos.*;
 import com.robertmartins.notesapi.exceptions.ResourceNotFoundException;
 import com.robertmartins.notesapi.models.WorkspaceModel;
 import com.robertmartins.notesapi.repositories.CommentRepository;
@@ -74,6 +73,45 @@ public class WorkspaceService implements WorkspaceResource {
         jobStatusResource.organizePositions(id);
         return workspaceRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Workspace Not Found"));
+    }
+
+    public WorkspaceReadDto getWorkspace(int id){
+        var workspace = this.findById(id);
+        var workspaceRead = new WorkspaceReadDto();
+        workspaceRead.setId(id);
+        workspaceRead.setName(workspace.getName());
+        workspaceRead.setDescription(workspace.getDescription());
+        workspaceRead.setJobCount(workspace.getJobs().size());
+        workspaceRead.setUpdatedAt(workspace.getUpdatedAt());
+        workspaceRead.setCreatedAt(workspace.getCreatedAt());
+        List<JobStatusReadDto> jobStatusReadList = new ArrayList<>();
+        workspace.getJobStatus().forEach(status -> {
+            var jobStatus = new JobStatusReadDto();
+            jobStatus.setId(status.getId());
+            jobStatus.setName(status.getName());
+            jobStatus.setDescription(status.getDescription());
+            List<JobReadDto> jobReadList = new ArrayList<>();
+            var jobs = workspace.getJobs().stream()
+                    .filter(j -> j.getJobStatus().getId() == status.getId())
+                    .collect(Collectors.toList());
+            jobs.forEach(j -> {
+                var jobRead = new JobReadDto();
+                jobRead.setId(j.getId());
+                jobRead.setName(j.getName());
+                jobRead.setDescription(j.getDescription());
+                jobRead.setCommentCount(j.getComments().size());
+                jobRead.setUpdatedAt(j.getUpdatedAt());
+                jobRead.setCreatedAt(j.getCreatedAt());
+                jobReadList.add(jobRead);
+            });
+            jobStatus.setJobs(jobReadList);
+            jobStatus.setStatusJobCount(jobReadList.size());
+            jobStatus.setUpdatedAt(status.getUpdatedAt());
+            jobStatus.setCreatedAt(status.getCreatedAt());
+            jobStatusReadList.add(jobStatus);
+            workspaceRead.setStatus(jobStatusReadList);
+        });
+        return workspaceRead;
     }
 
     public List<WorkspaceListDto> findAll(int id){

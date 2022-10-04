@@ -3,6 +3,7 @@ package com.robertmartins.notesapi.controllers;
 import com.robertmartins.notesapi.dtos.ClientResponseDto;
 import com.robertmartins.notesapi.dtos.NewWorkspaceDto;
 import com.robertmartins.notesapi.dtos.PaginatedResponseDto;
+import com.robertmartins.notesapi.dtos.WorkspaceReadDto;
 import com.robertmartins.notesapi.exceptions.ActionNotAllowedException;
 import com.robertmartins.notesapi.exceptions.ResourceNotFoundException;
 import com.robertmartins.notesapi.models.WorkspaceModel;
@@ -37,8 +38,8 @@ public class WorkspaceController {
     }
 
     @GetMapping("/{workspaceId}")
-    public ResponseEntity<WorkspaceModel> findUserWorkspaceById(@PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId){
-        return ResponseEntity.status(HttpStatus.OK).body(workspaceResource.findById(workspaceId));
+    public ResponseEntity<WorkspaceReadDto> findUserWorkspaceById(@PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId){
+        return ResponseEntity.status(HttpStatus.OK).body(workspaceResource.getWorkspace(workspaceId));
     }
 
     @PutMapping("/{workspaceId}")

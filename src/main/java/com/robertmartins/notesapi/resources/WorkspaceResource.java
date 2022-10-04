@@ -2,6 +2,7 @@ package com.robertmartins.notesapi.resources;
 
 import com.robertmartins.notesapi.dtos.NewWorkspaceDto;
 import com.robertmartins.notesapi.dtos.WorkspaceListDto;
+import com.robertmartins.notesapi.dtos.WorkspaceReadDto;
 import com.robertmartins.notesapi.models.WorkspaceModel;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,8 @@ public interface WorkspaceResource {
     WorkspaceModel update(NewWorkspaceDto workspaceDto, int workspaceId);
 
     WorkspaceModel findById(int id);
+
+    WorkspaceReadDto getWorkspace(int id);
 
     List<WorkspaceListDto> findAll(int id);
 
