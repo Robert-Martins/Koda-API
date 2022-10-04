@@ -2,6 +2,7 @@ package com.robertmartins.notesapi.controllers;
 
 import com.robertmartins.notesapi.dtos.ClientResponseDto;
 import com.robertmartins.notesapi.dtos.NewWorkspaceDto;
+import com.robertmartins.notesapi.dtos.PaginatedResponseDto;
 import com.robertmartins.notesapi.exceptions.ActionNotAllowedException;
 import com.robertmartins.notesapi.exceptions.ResourceNotFoundException;
 import com.robertmartins.notesapi.models.WorkspaceModel;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -66,8 +66,16 @@ public class WorkspaceController {
     }
 
     @GetMapping
-    public ResponseEntity<List<WorkspaceModel>> getAllUserWorkspaces(@PathVariable(name = "id") int id){
-        return ResponseEntity.status(HttpStatus.OK).body(userResource.findById(id).getWorkspaces());
+    public ResponseEntity<PaginatedResponseDto> getAllUserWorkspaces(@PathVariable(name = "id") int id){
+        return ResponseEntity.status(HttpStatus.OK).body(PaginatedResponseDto.builder()
+                .content(workspaceResource.findAll(id))
+                .itemsPerPage(0)
+                .page(0)
+                .order("")
+                .orderedBy("")
+                .timestamp(LocalDateTime.now())
+                .build()
+        );
     }
 
 

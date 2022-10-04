@@ -1,8 +1,11 @@
 package com.robertmartins.notesapi.resources;
 
 import com.robertmartins.notesapi.dtos.NewWorkspaceDto;
+import com.robertmartins.notesapi.dtos.WorkspaceListDto;
 import com.robertmartins.notesapi.models.WorkspaceModel;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public interface WorkspaceResource {
@@ -12,6 +15,8 @@ public interface WorkspaceResource {
     WorkspaceModel update(NewWorkspaceDto workspaceDto, int workspaceId);
 
     WorkspaceModel findById(int id);
+
+    List<WorkspaceListDto> findAll(int id);
 
     void deleteById(int workspaceId, int id);
 

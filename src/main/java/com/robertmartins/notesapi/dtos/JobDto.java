@@ -1,6 +1,5 @@
 package com.robertmartins.notesapi.dtos;
 
-import com.robertmartins.notesapi.models.JobStatusModel;
 import com.robertmartins.notesapi.models.UserModel;
 import lombok.Getter;
 import lombok.Setter;
