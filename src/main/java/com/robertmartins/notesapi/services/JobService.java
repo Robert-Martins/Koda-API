@@ -30,7 +30,7 @@ public class JobService implements JobResource {
     @Autowired
     private JobStatusRepository jobStatusRepository;
 
-    public JobModel save(JobDto jobDto, int id, int workspaceId){
+    public JobModel save(JobDto jobDto, int id, int workspaceId) throws ActionNotAllowedException{
         var user = userRepository.findById(id);
         var workspace = workspaceRepository.findById(workspaceId);
         var workspaceStatus = workspace.get().getJobStatus();
@@ -62,7 +62,7 @@ public class JobService implements JobResource {
         return jobRepository.save(job);
     }
 
-    public JobModel findById(int id){
+    public JobModel findById(int id) throws ResourceNotFoundException{
         return jobRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Job Not Found"));
     }

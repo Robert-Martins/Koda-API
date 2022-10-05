@@ -42,12 +42,12 @@ public class CommentService implements CommentResource{
         return commentRepository.save(comment);
     }
 
-    public CommentModel findById(int id){
+    public CommentModel findById(int id) throws ResourceNotFoundException{
         return commentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Comment Not Found"));
     }
 
-    public CommentReadDto getById(int id){
+    public CommentReadDto getById(int id) throws ResourceNotFoundException{
         var comment = commentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Comment Not Found"));
         return this.normalizeComment(comment);

@@ -45,7 +45,7 @@ public class ProfileService implements ProfileResource {
         return profileRepository.save(profile);
     }
 
-    private ProfileModel findById(int id){
+    private ProfileModel findById(int id) throws ResourceNotFoundException{
         return profileRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Profile Not Found"));
     }

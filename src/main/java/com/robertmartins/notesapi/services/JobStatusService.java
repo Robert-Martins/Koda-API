@@ -26,7 +26,7 @@ public class JobStatusService implements JobStatusResource {
     @Autowired
     private WorkspaceRepository workspaceRepository;
 
-    public JobStatusModel save(JobStatusDto jobStatusDto, int id){
+    public JobStatusModel save(JobStatusDto jobStatusDto, int id) throws ResourceNotFoundException{
         var workspace = workspaceRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Workspace Not Found"));
         var jobStatusList = workspace.getJobStatus();
@@ -50,13 +50,13 @@ public class JobStatusService implements JobStatusResource {
         return jobStatus;
     }
 
-    public JobStatusModel findById(int id){
+    public JobStatusModel findById(int id) throws ResourceNotFoundException{
         return jobStatusRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Status Not Found"));
     }
 
     @Transactional
-    public JobStatusModel changePosition(int id, int workspaceId, int position){
+    public JobStatusModel changePosition(int id, int workspaceId, int position) throws ResourceNotFoundException{
         var workspace = workspaceRepository.findById(workspaceId)
                 .orElseThrow(() -> new ResourceNotFoundException("Workspace Not Found"));
         var jobStatus = this.findById(id);
@@ -77,7 +77,7 @@ public class JobStatusService implements JobStatusResource {
     }
 
     @Transactional
-    public void organizePositions(int workspaceId){
+    public void organizePositions(int workspaceId) throws ResourceNotFoundException{
         var workspace = workspaceRepository.findById(workspaceId)
                 .orElseThrow(() -> new ResourceNotFoundException("Workspace Not Found"));
         var jobStatusList = workspace.getJobStatus();

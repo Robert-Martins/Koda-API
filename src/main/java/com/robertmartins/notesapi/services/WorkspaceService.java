@@ -70,7 +70,7 @@ public class WorkspaceService implements WorkspaceResource {
         workspaceRepository.deleteWorkspaceById(workspaceId);
     }
 
-    public WorkspaceModel findById(int id){
+    public WorkspaceModel findById(int id) throws ResourceNotFoundException{
         jobStatusResource.organizePositions(id);
         return workspaceRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Workspace Not Found"));

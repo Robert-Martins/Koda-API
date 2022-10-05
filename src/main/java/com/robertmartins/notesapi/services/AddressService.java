@@ -26,7 +26,7 @@ public class AddressService implements AddressResource {
         return addressRepository.save(address);
     }
 
-    private AddressModel findById(int id) {
+    private AddressModel findById(int id) throws ResourceNotFoundException{
         return addressRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Address Not Found"));
     }

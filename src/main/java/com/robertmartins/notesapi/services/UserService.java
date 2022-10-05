@@ -10,6 +10,7 @@ import com.robertmartins.notesapi.repositories.UserRepository;
 import com.robertmartins.notesapi.resources.AddressResource;
 import com.robertmartins.notesapi.resources.UserResource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
@@ -30,7 +31,7 @@ public class UserService implements UserResource {
     @Autowired
     private ProfileService profileService;
 
-    public UserModel save(UserDto userDto){
+    public UserModel save(UserDto userDto) throws DuplicateKeyException{
         if(profileRepository.existsByEmail(userDto.getProfile().getEmail()))
             throw new DuplicateKeyException("Conflict: Email already in use");
         if(userRepository.existsByLogin(userDto.getProfile().getEmail()))
@@ -39,7 +40,7 @@ public class UserService implements UserResource {
         var address = addressResource.setAddress(userDto.getProfile().getAddress());
         var profile = profileService.setProfile(userDto.getProfile(), address);
         user.setLogin(userDto.getProfile().getEmail());
-        user.setPassword(userDto.getPassword());
+        user.setPassword(new BCryptPasswordEncoder().encode(userDto.getPassword()));
         user.setProfile(profile);
         user.setUpdatedAt(new Date());
         user.setCreatedAt(new Date());
@@ -51,17 +52,17 @@ public class UserService implements UserResource {
     }
 
     @Transactional
-    public UserModel updateCredentials(UserCredentialsDto userCredentialsDto, int id){
+    public UserModel updateCredentials(UserCredentialsDto userCredentialsDto, int id) throws DuplicateKeyException{
         if(userRepository.existsByLogin(userCredentialsDto.getLogin()))
             throw new DuplicateKeyException("Conflict: Login already in use");
         var user = this.findById(id);
         user.setLogin(userCredentialsDto.getLogin());
-        user.setPassword(userCredentialsDto.getPassword());
+        user.setPassword(new BCryptPasswordEncoder().encode(userCredentialsDto.getPassword()));
         user.setUpdatedAt(new Date());
         return userRepository.save(user);
     }
 
-    public UserModel findById(int id){
+    public UserModel findById(int id) throws ResourceNotFoundException{
         return userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User Not Found"));
     }
