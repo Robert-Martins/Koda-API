@@ -2,6 +2,7 @@ package com.robertmartins.notesapi.services;
 
 import com.robertmartins.notesapi.dtos.*;
 import com.robertmartins.notesapi.exceptions.ResourceNotFoundException;
+import com.robertmartins.notesapi.models.JobModel;
 import com.robertmartins.notesapi.models.WorkspaceModel;
 import com.robertmartins.notesapi.repositories.CommentRepository;
 import com.robertmartins.notesapi.repositories.JobRepository;
@@ -61,12 +62,11 @@ public class WorkspaceService implements WorkspaceResource {
     }
 
     @Transactional
-    public void deleteById(int workspaceId, int id){
+    public void deleteById(int workspaceId){
         var workspace = this.findById(workspaceId);
         var status = workspace.getJobStatus();
-        if(!(status == null || status.size() == 0))
-            for(var s : status)
-                this.deleteStatusById(workspaceId, s.getId());
+        if(status != null && !status.isEmpty())
+            status.forEach(s -> this.deleteStatusById(workspace.getJobs(), s.getId()));
         workspaceRepository.deleteWorkspaceById(workspaceId);
     }
 
@@ -137,12 +137,11 @@ public class WorkspaceService implements WorkspaceResource {
     }
 
     @Transactional
-    public void deleteJobById(int workspaceId, int id){
+    public void deleteJobById(int id){
         var job = jobRepository.findById(id).orElseThrow();
         var comments = job.getComments();
-        if(!( comments == null || comments.size() == 0))
-            for(var comment : comments)
-                commentRepository.deleteCommentById(comment.getId());
+        if(comments != null && !comments.isEmpty())
+            comments.forEach(comment -> commentRepository.deleteCommentById(comment.getId()));
         jobRepository.deleteJobById(id);
     }
 
@@ -153,7 +152,19 @@ public class WorkspaceService implements WorkspaceResource {
         var jobs = workspace.getJobs().stream()
                         .filter(job -> job.getJobStatus().getId() == jobStatus.getId())
                         .collect(Collectors.toList());
-        jobs.forEach(jobModel -> this.deleteJobById(workspaceId, jobModel.getId()));
+        if(!jobs.isEmpty())
+            jobs.forEach(jobModel -> this.deleteJobById(jobModel.getId()));
+        jobStatusRepository.deleteStatusById(id);
+    }
+
+    @Transactional
+    private void deleteStatusById(List<JobModel> jobsList, int id){
+        var jobStatus = jobStatusResource.findById(id);
+        var jobs = jobsList.stream()
+                .filter(job -> job.getJobStatus().getId() == jobStatus.getId())
+                .collect(Collectors.toList());
+        if(!jobs.isEmpty())
+            jobs.forEach(jobModel -> this.deleteJobById(jobModel.getId()));
         jobStatusRepository.deleteStatusById(id);
     }
 

@@ -21,9 +21,9 @@ public interface WorkspaceResource {
 
     List<WorkspaceListDto> findAll(int id);
 
-    void deleteById(int workspaceId, int id);
+    void deleteById(int workspaceId);
 
-    void deleteJobById(int workspaceId, int id);
+    void deleteJobById(int id);
     void deleteStatusById(int workspaceId, int id);
 
     boolean workspaceExists(int id);

@@ -74,7 +74,7 @@ public class WorkspaceController {
             throw new ResourceNotFoundException("Workspace Not Found");
         if(!authorizationResource.itIsUserWorkspace(id, workspaceId))
             throw new ActionNotAllowedException();
-        workspaceResource.deleteById(workspaceId, id);
+        workspaceResource.deleteById(workspaceId);
         return ResponseEntity.status(HttpStatus.OK).body(
                 ClientResponseDto.builder()
                         .operationType("DELETE")

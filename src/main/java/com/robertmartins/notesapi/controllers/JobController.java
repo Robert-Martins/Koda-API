@@ -78,7 +78,7 @@ public class JobController {
             throw new ActionNotAllowedException();
         if(!authorizationResource.itIsWorkspaceJob(workspaceId, jobId))
             throw new ActionNotAllowedException();
-        workspaceResource.deleteJobById(workspaceId, jobId);
+        workspaceResource.deleteJobById(jobId);
         return ResponseEntity.status(HttpStatus.OK).body(ClientResponseDto.builder()
                 .operationType("DELETE")
                 .status(HttpStatus.OK.value())
