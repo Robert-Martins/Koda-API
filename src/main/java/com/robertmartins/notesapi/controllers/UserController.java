@@ -8,7 +8,7 @@ import com.robertmartins.notesapi.resources.UserResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -20,6 +20,11 @@ import java.time.LocalDateTime;
 public class UserController {
     @Autowired
     private UserResource userResource;
+
+    @PostMapping("/login")
+    public String login(Authentication authentication){
+        return userResource.generateToken(authentication);
+    }
 
     @PostMapping
     public ResponseEntity<ClientResponseDto> save(@RequestBody @Valid UserDto userDto){
