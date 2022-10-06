@@ -10,6 +10,9 @@ import com.robertmartins.notesapi.repositories.UserRepository;
 import com.robertmartins.notesapi.resources.AddressResource;
 import com.robertmartins.notesapi.resources.UserResource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +20,7 @@ import javax.transaction.Transactional;
 import java.util.Date;
 
 @Component
-public class UserService implements UserResource {
+public class UserService implements UserResource{
 
     @Autowired
     private UserRepository userRepository;
@@ -34,12 +37,12 @@ public class UserService implements UserResource {
     public UserModel save(UserDto userDto) throws DuplicateKeyException{
         if(profileRepository.existsByEmail(userDto.getProfile().getEmail()))
             throw new DuplicateKeyException("Conflict: Email already in use");
-        if(userRepository.existsByLogin(userDto.getProfile().getEmail()))
+        if(userRepository.existsByUsername(userDto.getProfile().getEmail()))
             throw new DuplicateKeyException("Conflict: Login already in use");
         var user = new UserModel();
         var address = addressResource.setAddress(userDto.getProfile().getAddress());
         var profile = profileService.setProfile(userDto.getProfile(), address);
-        user.setLogin(userDto.getProfile().getEmail());
+        user.setUsername(userDto.getProfile().getEmail());
         user.setPassword(new BCryptPasswordEncoder().encode(userDto.getPassword()));
         user.setProfile(profile);
         user.setUpdatedAt(new Date());
@@ -53,10 +56,10 @@ public class UserService implements UserResource {
 
     @Transactional
     public UserModel updateCredentials(UserCredentialsDto userCredentialsDto, int id) throws DuplicateKeyException{
-        if(userRepository.existsByLogin(userCredentialsDto.getLogin()))
+        if(userRepository.existsByUsername(userCredentialsDto.getLogin()))
             throw new DuplicateKeyException("Conflict: Login already in use");
         var user = this.findById(id);
-        user.setLogin(userCredentialsDto.getLogin());
+        user.setUsername(userCredentialsDto.getLogin());
         user.setPassword(new BCryptPasswordEncoder().encode(userCredentialsDto.getPassword()));
         user.setUpdatedAt(new Date());
         return userRepository.save(user);
@@ -72,8 +75,8 @@ public class UserService implements UserResource {
         userRepository.deleteById(id);
     }
 
-    public boolean existsByLogin(String login){
-        return userRepository.existsByLogin(login);
+    public boolean existsByUsername(String username){
+        return userRepository.existsByUsername(username);
     }
 
 }

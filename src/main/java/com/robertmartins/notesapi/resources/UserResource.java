@@ -21,6 +21,6 @@ public interface UserResource {
 
     void deleteById(int id);
 
-    boolean existsByLogin(String login);
+    boolean existsByUsername(String username);
 
 }

@@ -28,7 +28,7 @@ public class UserModel implements UserDetails {
     private int id;
 
     @Column(nullable = false, unique = true)
-    private String login;
+    private String username;
 
     @JsonIgnore
     @Column(nullable = false)
@@ -55,11 +55,6 @@ public class UserModel implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;
-    }
-
-    @Override
-    public String getUsername() {
-        return this.login;
     }
 
     @Override
