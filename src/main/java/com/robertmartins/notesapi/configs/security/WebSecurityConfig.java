@@ -42,6 +42,7 @@ public class WebSecurityConfig {
         http
                 .authorizeHttpRequests((authorize) -> authorize
                         .antMatchers(HttpMethod.POST, "/users").permitAll()
+                        .antMatchers(HttpMethod.GET, "/enums/uf").permitAll()
                         .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
