@@ -2,6 +2,7 @@ package com.robertmartins.notesapi.services;
 
 import com.robertmartins.notesapi.dtos.ProfileDto;
 import com.robertmartins.notesapi.dtos.UserProfileDto;
+import com.robertmartins.notesapi.exceptions.DuplicateKeyException;
 import com.robertmartins.notesapi.exceptions.ResourceNotFoundException;
 import com.robertmartins.notesapi.models.AddressModel;
 import com.robertmartins.notesapi.models.ProfileModel;
@@ -35,6 +36,8 @@ public class ProfileService implements ProfileResource {
     public ProfileModel update(UserProfileDto profileDto, int id){
         var user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User Not Found"));
+        if(profileRepository.existsByEmail(profileDto.getEmail()))
+            throw new DuplicateKeyException("Conflict: Email already in use");
         var profile = user.getProfile();
         profile.setName(profileDto.getName());
         profile.setEmail(profileDto.getEmail());
