@@ -8,6 +8,7 @@ import com.robertmartins.notesapi.resources.UserResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -27,8 +28,11 @@ public class DeviceController {
     private AuthorizationResource authorizationResource;
 
     @PutMapping("/{deviceId}")
-    public ResponseEntity<ClientResponseDto> changeDeviceStatus(@PathVariable(name = "id") int id, @PathVariable(name = "deviceId") int deviceId){
-        if(!authorizationResource.itIsUserDevice(id, deviceId))
+    public ResponseEntity<ClientResponseDto> changeDeviceStatus(Authentication authentication, @PathVariable(name = "id") int id, @PathVariable(name = "deviceId") int deviceId){
+        if(
+                !authorizationResource.checkJwtAuthorization(id, authentication.getName()) ||
+                !authorizationResource.itIsUserDevice(id, deviceId)
+        )
             throw new ActionNotAllowedException();
         var device = deviceResource.changeDeviceStatus(deviceId);
         return ResponseEntity.status(HttpStatus.OK).body(
@@ -43,8 +47,11 @@ public class DeviceController {
     }
 
     @DeleteMapping("/{deviceId}")
-    public ResponseEntity<ClientResponseDto> deleteById(@PathVariable(name = "id") int id, @PathVariable(name = "deviceId") int deviceId){
-        if(!authorizationResource.itIsUserDevice(id, deviceId))
+    public ResponseEntity<ClientResponseDto> deleteById(Authentication authentication, @PathVariable(name = "id") int id, @PathVariable(name = "deviceId") int deviceId){
+        if(
+                !authorizationResource.checkJwtAuthorization(id, authentication.getName()) ||
+                !authorizationResource.itIsUserDevice(id, deviceId)
+        )
             throw new ActionNotAllowedException();
         userResource.deleteUserDeviceById(id, deviceId);
         return ResponseEntity.status(HttpStatus.OK).body(

@@ -1,7 +1,9 @@
 package com.robertmartins.notesapi.controllers;
 
 import com.robertmartins.notesapi.dtos.*;
+import com.robertmartins.notesapi.exceptions.ActionNotAllowedException;
 import com.robertmartins.notesapi.models.UserModel;
+import com.robertmartins.notesapi.resources.AuthorizationResource;
 import com.robertmartins.notesapi.resources.UserResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,6 +20,9 @@ import java.time.LocalDateTime;
 public class UserController {
     @Autowired
     private UserResource userResource;
+
+    @Autowired
+    private AuthorizationResource authorizationResource;
 
     @PostMapping("/login")
     public ResponseEntity<ClientResponseDto> login(Authentication authentication, @RequestBody @Valid UserDeviceDto userDevice){
@@ -47,12 +52,16 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserModel> getUserById(@PathVariable(name = "id") int id){
+    public ResponseEntity<UserModel> getUserById(Authentication authentication, @PathVariable(name = "id") int id){
+        if(!authorizationResource.checkJwtAuthorization(id, authentication.getName()))
+            throw new ActionNotAllowedException();
         return ResponseEntity.status(HttpStatus.OK).body(userResource.findById(id));
     }
 
     @GetMapping("/{id}/devices")
-    public ResponseEntity<PaginatedResponseDto> getAllUserDevices(@PathVariable(name = "id") int id){
+    public ResponseEntity<PaginatedResponseDto> getAllUserDevices(Authentication authentication, @PathVariable(name = "id") int id){
+        if(!authorizationResource.checkJwtAuthorization(id, authentication.getName()))
+            throw new ActionNotAllowedException();
         return ResponseEntity.status(HttpStatus.OK).body(
                 PaginatedResponseDto.builder()
                         .content(userResource.findAllUserDevices(id))
@@ -67,7 +76,9 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ClientResponseDto> updateUserCredentialsById(@PathVariable(name = "id") int id, @RequestBody @Valid UserCredentialsDto userCredentials){
+    public ResponseEntity<ClientResponseDto> updateUserCredentialsById(Authentication authentication, @PathVariable(name = "id") int id, @RequestBody @Valid UserCredentialsDto userCredentials){
+        if(!authorizationResource.checkJwtAuthorization(id, authentication.getName()))
+            throw new ActionNotAllowedException();
         var user = userResource.updateCredentials(userCredentials, id);
         return ResponseEntity.status(HttpStatus.OK).body(
                 ClientResponseDto.builder()
@@ -81,7 +92,9 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ClientResponseDto> deleteUserById(@PathVariable(name = "id") int id){
+    public ResponseEntity<ClientResponseDto> deleteUserById(Authentication authentication, @PathVariable(name = "id") int id){
+        if(!authorizationResource.checkJwtAuthorization(id, authentication.getName()))
+            throw new ActionNotAllowedException();
         userResource.deleteById(id);
         return ResponseEntity.status(HttpStatus.OK).body(
                 ClientResponseDto.builder()

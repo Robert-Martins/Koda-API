@@ -9,6 +9,7 @@ import com.robertmartins.notesapi.resources.AuthorizationResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -26,7 +27,9 @@ public class AddressController {
     private AuthorizationResource authorizationResource;
 
     @PutMapping("/{addressId}")
-    public ResponseEntity<ClientResponseDto> updateUserAddress(@PathVariable(name = "id") int id, @PathVariable(name = "addressId") int addressId, @RequestBody @Valid AddressDto addressDto){
+    public ResponseEntity<ClientResponseDto> updateUserAddress(Authentication authentication, @PathVariable(name = "id") int id, @PathVariable(name = "addressId") int addressId, @RequestBody @Valid AddressDto addressDto){
+        if(!authorizationResource.checkJwtAuthorization(id, authentication.getName()))
+            throw new ActionNotAllowedException();
         if(!addressResource.addressExists(addressId))
             throw new ResourceNotFoundException("Address Not Found");
         if(!authorizationResource.itIsUserAddress(id, addressId))

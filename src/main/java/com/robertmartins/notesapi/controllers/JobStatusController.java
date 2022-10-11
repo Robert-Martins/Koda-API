@@ -11,6 +11,7 @@ import com.robertmartins.notesapi.resources.WorkspaceResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -31,8 +32,11 @@ public class JobStatusController {
     private AuthorizationResource authorizationResource;
 
     @PostMapping
-    public ResponseEntity<ClientResponseDto> save(@PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId, @RequestBody @Valid JobStatusDto jobStatusDto){
-        if(!authorizationResource.itIsUserWorkspace(id, workspaceId))
+    public ResponseEntity<ClientResponseDto> save(Authentication authentication, @PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId, @RequestBody @Valid JobStatusDto jobStatusDto){
+        if(
+                !authorizationResource.checkJwtAuthorization(id, authentication.getName()) ||
+                !authorizationResource.itIsUserWorkspace(id, workspaceId)
+        )
             throw new ActionNotAllowedException();
         var jobStatus = jobStatusResource.save(jobStatusDto, workspaceId);
         return ResponseEntity.status(HttpStatus.CREATED).body(
@@ -47,17 +51,22 @@ public class JobStatusController {
     }
 
     @GetMapping("/{statusId}")
-    public ResponseEntity<JobStatusModel> getJobStatus(@PathVariable(name = "id")int id, @PathVariable(name = "statusId") int statusId){
+    public ResponseEntity<JobStatusModel> getJobStatus(Authentication authentication, @PathVariable(name = "id")int id, @PathVariable(name = "statusId") int statusId){
+        if(!authorizationResource.checkJwtAuthorization(id, authentication.getName()))
+            throw new ActionNotAllowedException();
         return ResponseEntity.status(HttpStatus.OK).body(jobStatusResource.findById(statusId));
     }
 
     @PutMapping("/{statusId}")
-    public ResponseEntity<ClientResponseDto> updateStatusById(@PathVariable(name = "id")int id, @PathVariable(name = "workspaceId") int workspaceId, @PathVariable(name = "statusId") int statusId, @RequestBody @Valid JobStatusDto jobStatusDto){
+    public ResponseEntity<ClientResponseDto> updateStatusById(Authentication authentication, @PathVariable(name = "id")int id, @PathVariable(name = "workspaceId") int workspaceId, @PathVariable(name = "statusId") int statusId, @RequestBody @Valid JobStatusDto jobStatusDto){
+        if(!authorizationResource.checkJwtAuthorization(id, authentication.getName()))
+            throw new ActionNotAllowedException();
         if(!jobStatusResource.jobStatusExists(statusId))
             throw new ResourceNotFoundException("Status Not Found");
-        if(!authorizationResource.itIsUserWorkspace(id, workspaceId))
-            throw new ActionNotAllowedException();
-        if(!authorizationResource.itIsWorkspaceStatus(workspaceId, statusId))
+        if(
+                !authorizationResource.itIsUserWorkspace(id, workspaceId) ||
+                !authorizationResource.itIsWorkspaceStatus(workspaceId, statusId)
+        )
             throw new ActionNotAllowedException();
         var jobStatus = jobStatusResource.update(jobStatusDto, statusId);
         return ResponseEntity.status(HttpStatus.OK).body(
@@ -72,12 +81,15 @@ public class JobStatusController {
     }
 
     @PutMapping("/{statusId}/position")
-    public ResponseEntity<ClientResponseDto> updateStatusPositionById(@PathVariable(name = "id")int id, @PathVariable(name = "workspaceId") int workspaceId, @PathVariable(name = "statusId") int statusId, @RequestParam String position){
+    public ResponseEntity<ClientResponseDto> updateStatusPositionById(Authentication authentication, @PathVariable(name = "id")int id, @PathVariable(name = "workspaceId") int workspaceId, @PathVariable(name = "statusId") int statusId, @RequestParam String position){
+        if(!authorizationResource.checkJwtAuthorization(id, authentication.getName()))
+            throw new ActionNotAllowedException();
         if(!jobStatusResource.jobStatusExists(statusId))
             throw new ResourceNotFoundException("Status Not Found");
-        if(!authorizationResource.itIsUserWorkspace(id, workspaceId))
-            throw new ActionNotAllowedException();
-        if(!authorizationResource.itIsWorkspaceStatus(workspaceId, statusId))
+        if(
+                !authorizationResource.itIsUserWorkspace(id, workspaceId) ||
+                !authorizationResource.itIsWorkspaceStatus(workspaceId, statusId)
+        )
             throw new ActionNotAllowedException();
         var jobStatus = jobStatusResource.changePosition(statusId, workspaceId, Integer.parseInt(position));
         return ResponseEntity.status(HttpStatus.OK).body(
@@ -92,12 +104,15 @@ public class JobStatusController {
     }
 
     @DeleteMapping("/{statusId}")
-    public ResponseEntity<ClientResponseDto> deleteStatusById(@PathVariable(name = "id")int id, @PathVariable(name = "workspaceId") int workspaceId, @PathVariable(name = "statusId") int statusId){
+    public ResponseEntity<ClientResponseDto> deleteStatusById(Authentication authentication, @PathVariable(name = "id")int id, @PathVariable(name = "workspaceId") int workspaceId, @PathVariable(name = "statusId") int statusId){
+        if(!authorizationResource.checkJwtAuthorization(id, authentication.getName()))
+            throw new ActionNotAllowedException();
         if(!jobStatusResource.jobStatusExists(statusId))
             throw new ResourceNotFoundException("Status Not Found");
-        if(!authorizationResource.itIsUserWorkspace(id, workspaceId))
-            throw new ActionNotAllowedException();
-        if(!authorizationResource.itIsWorkspaceStatus(workspaceId, statusId))
+        if(
+                !authorizationResource.itIsUserWorkspace(id, workspaceId) ||
+                !authorizationResource.itIsWorkspaceStatus(workspaceId, statusId)
+        )
             throw new ActionNotAllowedException();
         workspaceResource.deleteStatusById(workspaceId, statusId);
         return ResponseEntity.status(HttpStatus.OK).body(

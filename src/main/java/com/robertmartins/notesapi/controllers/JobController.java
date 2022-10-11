@@ -11,6 +11,7 @@ import com.robertmartins.notesapi.resources.WorkspaceResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -31,8 +32,11 @@ public class JobController {
     private AuthorizationResource authorizationResource;
 
     @PostMapping
-    public ResponseEntity<ClientResponseDto> save(@PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId, @RequestBody @Valid JobDto jobDto){
-        if(!authorizationResource.itIsUserWorkspace(id, workspaceId))
+    public ResponseEntity<ClientResponseDto> save(Authentication authentication, @PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId, @RequestBody @Valid JobDto jobDto){
+        if(
+                !authorizationResource.checkJwtAuthorization(id, authentication.getName()) ||
+                !authorizationResource.itIsUserWorkspace(id, workspaceId)
+        )
             throw new ActionNotAllowedException();
         var job = jobResource.save(jobDto, id, workspaceId);
         return ResponseEntity.status(HttpStatus.CREATED).body(
@@ -47,17 +51,22 @@ public class JobController {
     }
 
     @GetMapping("/{jobId}")
-    public ResponseEntity<JobModel> getJobById(@PathVariable(name = "jobId") int jobId){
+    public ResponseEntity<JobModel> getJobById(Authentication authentication, @PathVariable(name = "id") int id, @PathVariable(name = "jobId") int jobId){
+        if(!authorizationResource.checkJwtAuthorization(id, authentication.getName()))
+            throw new ActionNotAllowedException();
         return ResponseEntity.status(HttpStatus.OK).body(jobResource.findById(jobId));
     }
 
     @PutMapping("/{jobId}")
-    public ResponseEntity<ClientResponseDto> updateJobById(@PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId, @PathVariable(name = "jobId") int jobId, @RequestBody @Valid JobDto jobDto){
+    public ResponseEntity<ClientResponseDto> updateJobById(Authentication authentication, @PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId, @PathVariable(name = "jobId") int jobId, @RequestBody @Valid JobDto jobDto){
+        if(!authorizationResource.checkJwtAuthorization(id, authentication.getName()))
+            throw new ActionNotAllowedException();
         if(!jobResource.jobExists(jobId))
             throw new ResourceNotFoundException("Job Not Found");
-        if(!authorizationResource.itIsUserWorkspace(id, workspaceId))
-            throw new ActionNotAllowedException();
-        if(!authorizationResource.itIsWorkspaceJob(workspaceId, jobId))
+        if(
+                !authorizationResource.itIsUserWorkspace(id, workspaceId) ||
+                !authorizationResource.itIsWorkspaceJob(workspaceId, jobId)
+        )
             throw new ActionNotAllowedException();
         var job = jobResource.update(jobDto, jobId);
         return ResponseEntity.status(HttpStatus.OK).body(ClientResponseDto.builder()
@@ -71,12 +80,15 @@ public class JobController {
     }
 
     @DeleteMapping("/{jobId}")
-    public ResponseEntity<ClientResponseDto> deleteJobById(@PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId, @PathVariable(name = "jobId") int jobId){
+    public ResponseEntity<ClientResponseDto> deleteJobById(Authentication authentication, @PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId, @PathVariable(name = "jobId") int jobId){
+        if(!authorizationResource.checkJwtAuthorization(id, authentication.getName()))
+            throw new ActionNotAllowedException();
         if(!jobResource.jobExists(jobId))
             throw new ResourceNotFoundException("Job Not Found");
-        if(!authorizationResource.itIsUserWorkspace(id, workspaceId))
-            throw new ActionNotAllowedException();
-        if(!authorizationResource.itIsWorkspaceJob(workspaceId, jobId))
+        if(
+                !authorizationResource.itIsUserWorkspace(id, workspaceId) ||
+                !authorizationResource.itIsWorkspaceJob(workspaceId, jobId)
+        )
             throw new ActionNotAllowedException();
         workspaceResource.deleteJobById(jobId);
         return ResponseEntity.status(HttpStatus.OK).body(ClientResponseDto.builder()

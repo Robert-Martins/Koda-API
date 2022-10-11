@@ -9,6 +9,7 @@ import com.robertmartins.notesapi.resources.JobResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -29,10 +30,12 @@ public class CommentController {
     private AuthorizationResource authorizationResource;
 
     @PostMapping
-    public ResponseEntity<ClientResponseDto> save(@PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId , @PathVariable(name = "jobId") int jobId, @RequestBody @Valid CommentDto commentDto){
-        if(!authorizationResource.itIsUserWorkspace(id, workspaceId))
-            throw new ActionNotAllowedException();
-        if(!authorizationResource.itIsWorkspaceJob(workspaceId, jobId))
+    public ResponseEntity<ClientResponseDto> save(Authentication authentication, @PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId , @PathVariable(name = "jobId") int jobId, @RequestBody @Valid CommentDto commentDto){
+        if(
+                !authorizationResource.checkJwtAuthorization(id, authentication.getName()) ||
+                !authorizationResource.itIsUserWorkspace(id, workspaceId) ||
+                !authorizationResource.itIsWorkspaceJob(workspaceId, jobId)
+        )
             throw new ActionNotAllowedException();
         var comment = commentResource.save(commentDto, id, jobId);
         return ResponseEntity.status(HttpStatus.CREATED).body(
@@ -47,21 +50,25 @@ public class CommentController {
     }
 
     @GetMapping("/{commentId}")
-    public ResponseEntity<CommentReadDto> getById(@PathVariable(name = "commentId") int commentId){
+    public ResponseEntity<CommentReadDto> getById(Authentication authentication, @PathVariable(name = "id") int id, @PathVariable(name = "commentId") int commentId){
+        if(!authorizationResource.checkJwtAuthorization(id, authentication.getName()))
+            throw new ActionNotAllowedException();
         return ResponseEntity.status(HttpStatus.OK).body(commentResource.getById(commentId));
     }
 
     @PutMapping("/{commentId}")
-    public ResponseEntity<ClientResponseDto> updateById(@PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId , @PathVariable(name = "jobId") int jobId, @PathVariable(name = "commentId") int commentId, @RequestBody @Valid CommentDto commentDto){
+    public ResponseEntity<ClientResponseDto> updateById(Authentication authentication, @PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId , @PathVariable(name = "jobId") int jobId, @PathVariable(name = "commentId") int commentId, @RequestBody @Valid CommentDto commentDto){
+        if(!authorizationResource.checkJwtAuthorization(id, authentication.getName()))
+            throw new ActionNotAllowedException();
         if(!commentResource.commentExists(commentId))
             throw new ResourceNotFoundException("Comment Not Found");
-        if(!authorizationResource.itIsUserWorkspace(id, workspaceId))
+        if(
+                !authorizationResource.itIsUserWorkspace(id, workspaceId) ||
+                !authorizationResource.itIsWorkspaceJob(workspaceId, jobId) ||
+                !authorizationResource.itIsJobComment(jobId, commentId)
+        )
             throw new ActionNotAllowedException();
-        if(!authorizationResource.itIsWorkspaceJob(workspaceId, jobId))
-            throw new ActionNotAllowedException();
-        if(!authorizationResource.itIsJobComment(jobId, commentId))
-            throw new ActionNotAllowedException();
-        var comment = commentResource.update(commentDto, commentId);
+        commentResource.update(commentDto, commentId);
         return ResponseEntity.status(HttpStatus.OK).body(
                 ClientResponseDto.builder()
                         .id(commentId)
@@ -74,14 +81,16 @@ public class CommentController {
     }
 
     @DeleteMapping("/{commentId}")
-    public ResponseEntity<ClientResponseDto> deleteById(@PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId , @PathVariable(name = "jobId") int jobId, @PathVariable(name = "commentId") int commentId){
+    public ResponseEntity<ClientResponseDto> deleteById(Authentication authentication, @PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId , @PathVariable(name = "jobId") int jobId, @PathVariable(name = "commentId") int commentId){
+        if(!authorizationResource.checkJwtAuthorization(id, authentication.getName()))
+            throw new ActionNotAllowedException();
         if(!commentResource.commentExists(commentId))
             throw new ResourceNotFoundException("Comment Not Found");
-        if(!authorizationResource.itIsUserWorkspace(id, workspaceId))
-            throw new ActionNotAllowedException();
-        if(!authorizationResource.itIsWorkspaceJob(workspaceId, jobId))
-            throw new ActionNotAllowedException();
-        if(!authorizationResource.itIsJobComment(jobId, commentId))
+        if(
+                !authorizationResource.itIsUserWorkspace(id, workspaceId) ||
+                !authorizationResource.itIsWorkspaceJob(workspaceId, jobId) ||
+                !authorizationResource.itIsJobComment(jobId, commentId)
+        )
             throw new ActionNotAllowedException();
         commentResource.deleteById(commentId);
         return ResponseEntity.status(HttpStatus.OK).body(
@@ -95,10 +104,12 @@ public class CommentController {
     }
 
     @GetMapping
-    public ResponseEntity<PaginatedResponseDto> findAllCommentsInAJob(@PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId ,@PathVariable(name = "jobId") int jobId){
-        if(!authorizationResource.itIsUserWorkspace(id, workspaceId))
-            throw new ActionNotAllowedException();
-        if(!authorizationResource.itIsWorkspaceJob(workspaceId, jobId))
+    public ResponseEntity<PaginatedResponseDto> findAllCommentsInAJob(Authentication authentication, @PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId ,@PathVariable(name = "jobId") int jobId){
+        if(
+                !authorizationResource.checkJwtAuthorization(id, authentication.getName()) ||
+                !authorizationResource.itIsUserWorkspace(id, workspaceId) ||
+                !authorizationResource.itIsWorkspaceJob(workspaceId, jobId)
+        )
             throw new ActionNotAllowedException();
         return ResponseEntity.status(HttpStatus.OK).body(PaginatedResponseDto.builder()
                 .content(commentResource.getAllCommentsInAJob(jobId))

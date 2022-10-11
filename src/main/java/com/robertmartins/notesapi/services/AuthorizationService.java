@@ -4,6 +4,8 @@ import com.robertmartins.notesapi.resources.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 @Component
 public class AuthorizationService implements AuthorizationResource {
 
@@ -12,9 +14,6 @@ public class AuthorizationService implements AuthorizationResource {
 
     @Autowired
     private WorkspaceResource workspaceResource;
-
-    @Autowired
-    private DeviceResource deviceResource;
 
     @Autowired
     private JobResource jobResource;
@@ -35,7 +34,8 @@ public class AuthorizationService implements AuthorizationResource {
 
     @Override
     public boolean checkJwtAuthorization(int id, String username) {
-        return false;
+        var user = userResource.findById(id);
+        return Objects.equals(user.getUsername(), username);
     }
 
     public boolean itIsUserWorkspace(int id, int workspaceId){

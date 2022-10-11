@@ -12,6 +12,7 @@ import com.robertmartins.notesapi.resources.WorkspaceResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -32,7 +33,9 @@ public class WorkspaceController {
     private AuthorizationResource authorizationResource;
 
     @PostMapping
-    public ResponseEntity<ClientResponseDto> save(@RequestBody @Valid NewWorkspaceDto newWorkspaceDto, @PathVariable(name = "id") int id){
+    public ResponseEntity<ClientResponseDto> save(Authentication authentication, @RequestBody @Valid NewWorkspaceDto newWorkspaceDto, @PathVariable(name = "id") int id){
+        if(!authorizationResource.checkJwtAuthorization(id, authentication.getName()))
+            throw new ActionNotAllowedException();
         var workspace = workspaceResource.save(newWorkspaceDto, id);
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 ClientResponseDto.builder()
@@ -46,12 +49,16 @@ public class WorkspaceController {
     }
 
     @GetMapping("/{workspaceId}")
-    public ResponseEntity<WorkspaceReadDto> findUserWorkspaceById(@PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId){
+    public ResponseEntity<WorkspaceReadDto> findUserWorkspaceById(Authentication authentication, @PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId){
+        if(!authorizationResource.checkJwtAuthorization(id, authentication.getName()))
+            throw new ActionNotAllowedException();
         return ResponseEntity.status(HttpStatus.OK).body(workspaceResource.getWorkspace(workspaceId));
     }
 
     @PutMapping("/{workspaceId}")
-    public ResponseEntity<ClientResponseDto> updateUserWorkspaceById(@PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId, @RequestBody @Valid NewWorkspaceDto workspaceDto){
+    public ResponseEntity<ClientResponseDto> updateUserWorkspaceById(Authentication authentication, @PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId, @RequestBody @Valid NewWorkspaceDto workspaceDto){
+        if(!authorizationResource.checkJwtAuthorization(id, authentication.getName()))
+            throw new ActionNotAllowedException();
         if(!workspaceResource.workspaceExists(workspaceId))
             throw new ResourceNotFoundException("Workspace Not Found");
         if(!authorizationResource.itIsUserWorkspace(id, workspaceId))
@@ -69,7 +76,9 @@ public class WorkspaceController {
     }
 
     @DeleteMapping("/{workspaceId}")
-    public ResponseEntity<ClientResponseDto> deleteUserWorkspaceById(@PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId){
+    public ResponseEntity<ClientResponseDto> deleteUserWorkspaceById(Authentication authentication, @PathVariable(name = "id") int id, @PathVariable(name = "workspaceId") int workspaceId){
+        if(!authorizationResource.checkJwtAuthorization(id, authentication.getName()))
+            throw new ActionNotAllowedException();
         if(!workspaceResource.workspaceExists(workspaceId))
             throw new ResourceNotFoundException("Workspace Not Found");
         if(!authorizationResource.itIsUserWorkspace(id, workspaceId))
@@ -86,7 +95,9 @@ public class WorkspaceController {
     }
 
     @GetMapping
-    public ResponseEntity<PaginatedResponseDto> getAllUserWorkspaces(@PathVariable(name = "id") int id){
+    public ResponseEntity<PaginatedResponseDto> getAllUserWorkspaces(Authentication authentication, @PathVariable(name = "id") int id){
+        if(!authorizationResource.checkJwtAuthorization(id, authentication.getName()))
+            throw new ActionNotAllowedException();
         return ResponseEntity.status(HttpStatus.OK).body(PaginatedResponseDto.builder()
                 .content(workspaceResource.findAll(id))
                 .itemsPerPage(0)
