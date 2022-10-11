@@ -123,18 +123,7 @@ public class UserService implements UserResource{
             userRepository.save(user);
             emailResource.sendLoginInNewIpEmail(user.getProfile().getEmail(), userDevice);
         }
-        Instant now = Instant.now();
-        String scope = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(" "));
-        JwtClaimsSet claims = JwtClaimsSet.builder()
-                .issuer("self")
-                .issuedAt(now)
-                .expiresAt(now.plus(1, ChronoUnit.HOURS))
-                .subject(authentication.getName())
-                .claim("scope", scope)
-                .build();
-        return this.jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+        return this.generateToken(authentication);
     }
 
     @Transactional
@@ -155,6 +144,21 @@ public class UserService implements UserResource{
 
     public boolean existsByUsername(String username){
         return userRepository.existsByUsername(username);
+    }
+
+    private String generateToken(Authentication authentication){
+        Instant now = Instant.now();
+        String scope = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(" "));
+        JwtClaimsSet claims = JwtClaimsSet.builder()
+                .issuer("self")
+                .issuedAt(now)
+                .expiresAt(now.plus(1, ChronoUnit.HOURS))
+                .subject(authentication.getName())
+                .claim("scope", scope)
+                .build();
+        return this.jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
     }
 
 }
