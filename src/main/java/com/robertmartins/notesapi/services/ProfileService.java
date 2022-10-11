@@ -33,14 +33,15 @@ public class ProfileService implements ProfileResource {
 
     @Transactional
     public ProfileModel update(UserProfileDto profileDto, int id){
-        Optional<UserModel> user = userRepository.findById(id);
-        var profile = user.get().getProfile();
+        var user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User Not Found"));
+        var profile = user.getProfile();
         profile.setName(profileDto.getName());
         profile.setEmail(profileDto.getEmail());
         profile.setCpf(profileDto.getCpf());
         profile.setBirthDate(profileDto.getBirthDate());
         profile.setTelephone(profileDto.getTelephone());
-        profile.setAddress(profileDto.getAddress());
+        profile.setAddress(addressResource.update(profileDto.getAddress(), profile.getAddress().getId()));
         profile.setUpdatedAt(new Date());
         return profileRepository.save(profile);
     }

@@ -28,6 +28,6 @@ public class UserProfileDto {
     @Size(max = 15)
     private String telephone;
 
-    private AddressModel address;
+    private AddressDto address;
 
 }
