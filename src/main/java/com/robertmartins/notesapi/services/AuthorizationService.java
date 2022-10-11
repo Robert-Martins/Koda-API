@@ -1,9 +1,6 @@
 package com.robertmartins.notesapi.services;
 
-import com.robertmartins.notesapi.resources.AuthorizationResource;
-import com.robertmartins.notesapi.resources.JobResource;
-import com.robertmartins.notesapi.resources.UserResource;
-import com.robertmartins.notesapi.resources.WorkspaceResource;
+import com.robertmartins.notesapi.resources.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,12 +14,28 @@ public class AuthorizationService implements AuthorizationResource {
     private WorkspaceResource workspaceResource;
 
     @Autowired
+    private DeviceResource deviceResource;
+
+    @Autowired
     private JobResource jobResource;
 
     public boolean itIsUserAddress(int id, int addressId){
         var user = userResource.findById(id);
         var userAddressId = user.getProfile().getAddress().getId();
         return userAddressId == addressId;
+    }
+
+    @Override
+    public boolean itIsUserDevice(int id, int deviceId) {
+        var user = userResource.findById(id);
+        var deviceList = user.getDevices();
+        return deviceList.stream()
+                .anyMatch(device -> device.getId() == deviceId);
+    }
+
+    @Override
+    public boolean checkJwtAuthorization(int id, String username) {
+        return false;
     }
 
     public boolean itIsUserWorkspace(int id, int workspaceId){

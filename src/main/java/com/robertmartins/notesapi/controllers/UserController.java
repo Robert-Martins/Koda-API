@@ -1,8 +1,6 @@
 package com.robertmartins.notesapi.controllers;
 
-import com.robertmartins.notesapi.dtos.ClientResponseDto;
-import com.robertmartins.notesapi.dtos.UserCredentialsDto;
-import com.robertmartins.notesapi.dtos.UserDto;
+import com.robertmartins.notesapi.dtos.*;
 import com.robertmartins.notesapi.models.UserModel;
 import com.robertmartins.notesapi.resources.UserResource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +20,16 @@ public class UserController {
     private UserResource userResource;
 
     @PostMapping("/login")
-    public String login(Authentication authentication){
-        return userResource.generateToken(authentication);
+    public ResponseEntity<ClientResponseDto> login(Authentication authentication, @RequestBody @Valid UserDeviceDto userDevice){
+        return ResponseEntity.status(HttpStatus.OK).body(
+                ClientResponseDto.builder()
+                        .id(0)
+                        .operationType("AUTHENTICATION")
+                        .status(HttpStatus.OK.value())
+                        .message(userResource.login(authentication, userDevice))
+                        .timestamp(LocalDateTime.now())
+                        .build()
+        );
     }
 
     @PostMapping
@@ -43,6 +49,21 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<UserModel> getUserById(@PathVariable(name = "id") int id){
         return ResponseEntity.status(HttpStatus.OK).body(userResource.findById(id));
+    }
+
+    @GetMapping("/{id}/devices")
+    public ResponseEntity<PaginatedResponseDto> getAllUserDevices(@PathVariable(name = "id") int id){
+        return ResponseEntity.status(HttpStatus.OK).body(
+                PaginatedResponseDto.builder()
+                        .content(userResource.findAllUserDevices(id))
+                        .page(0)
+                        .itemsPerPage(0)
+                        .totalPages(0)
+                        .orderedBy(" ")
+                        .order(" ")
+                        .timestamp(LocalDateTime.now())
+                        .build()
+        );
     }
 
     @PutMapping("/{id}")

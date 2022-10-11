@@ -15,4 +15,8 @@ public interface AuthorizationResource {
 
     boolean itIsUserAddress(int id, int addressId);
 
+    boolean itIsUserDevice(int id, int deviceId);
+
+    boolean checkJwtAuthorization(int id, String username);
+
 }

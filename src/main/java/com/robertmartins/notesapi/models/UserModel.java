@@ -42,6 +42,10 @@ public class UserModel implements UserDetails {
     @JoinColumn(name = "userId", referencedColumnName = "id")
     private List<WorkspaceModel> workspaces;
 
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "userId", referencedColumnName = "id")
+    private List<UserDeviceModel> devices;
+
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)

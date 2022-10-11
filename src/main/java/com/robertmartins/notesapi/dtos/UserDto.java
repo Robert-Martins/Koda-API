@@ -12,6 +12,8 @@ public class UserDto {
 
     private ProfileDto profile;
 
+    private UserDeviceDto device;
+
     @NotEmpty
     @Size(max = 30, min = 8)
     private String password;
