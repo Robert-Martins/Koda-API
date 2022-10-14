@@ -1,5 +1,6 @@
 package com.robertmartins.notesapi.models;
 
+import lombok.Builder;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -9,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
+@Builder
 @Entity
 @Table(name = "TB_EMAILS")
 public class EmailModel {
@@ -16,9 +18,6 @@ public class EmailModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-
-    @Column(name = "ownerRef")
-    private String ownerRef;
 
     @Column(name = "emailFrom")
     private String emailFrom;
